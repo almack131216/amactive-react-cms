@@ -1,9 +1,12 @@
-import { v4 as uuidv4 } from "uuid"
+// import { v4 as uuidv4 } from "uuid"
 
 const ACTIONS = {
   SET_ITEMS: "set-items",
   SET_CATEGORIES: "set-categories",
   SET_SUBCATEGORIES: "set-subcategories",
+  DELETE_CATEGORY: "delete-category",
+  DELETE_SUBCATEGORY: "delete-subcategory",
+  DELETE_ITEM: "delete-item",
 }
 
 const crudReducer = (state, action) => {
@@ -17,6 +20,28 @@ const crudReducer = (state, action) => {
 
     case ACTIONS.SET_SUBCATEGORIES:
       return { ...state, subcategories: action.payload }
+
+    case ACTIONS.DELETE_CATEGORY:
+      return {
+        ...state,
+        categories: state.categories.filter(
+          (category) => category.id !== action.payload
+        ),
+      }
+
+    case ACTIONS.DELETE_SUBCATEGORY:
+      return {
+        ...state,
+        subcategories: state.subcategories.filter(
+          (subcategory) => subcategory.id !== action.payload
+        ),
+      }
+
+    case ACTIONS.DELETE_ITEM:
+      return {
+        ...state,
+        items: state.items.filter((item) => item.id !== action.payload),
+      }
 
     default:
       return state

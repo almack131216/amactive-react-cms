@@ -1,40 +1,24 @@
-import { ACTIONS } from "./CrudReducer"
+export const buildQuery = ({
+  api,
+  status,
+  id,
+  type,
+  categoryId,
+  subcategoryId,
+  limit,
+}) => {
+  //[ITEMLIST] api-base.php?api=items&spec=Live&limit=10
+  //[ITEM] api-base.php?api=items&spec=Live&id=38211
 
-export const getCategories = () => {
-  console.log("[ACTIONS]-getCategories()")
+  const base = "http://localhost:8080/amactive-react-cms/api-base.php"
 
-  const categories = [
-    { id: 1, name: "Cars" },
-    { id: 2, name: "Motorbikes" },
-  ]
+  let q = `${base}?api=${api}`
+  if (type) q = `${q}&type=${type}`
+  if (id) q = `${q}&id=${id}`
+  if (categoryId) q = `${q}&categoryId=${categoryId}`
+  if (subcategoryId) q = `${q}&subcategoryId=${subcategoryId}`
+  if (typeof status !== 'undefined') q = `${q}&status=${status}`
+  if (limit) q = `${q}&limit=${limit}`
 
-  return categories
-}
-
-export const getSubcategories = () => {
-  console.log("[ACTIONS]-getSubcategories()")
-
-  const subcategories = [
-    { id: 1, name: "Vauxhall", categoryId: 1 },
-    { id: 2, name: "Toyota", categoryId: 1 },
-    { id: 3, name: "Peugeot", categoryId: 1 },
-    { id: 4, name: "Nissan", categoryId: 1 },
-    { id: 5, name: "Porsche", categoryId: 1 },
-    { id: 6, name: "Honda", categoryId: 1 },
-  ]
-
-  return subcategories
-}
-
-export const getItems = () => {
-  console.log("[ACTIONS]-getItems()")
-
-  const items = [
-    { id: 1, name: "Vauxhall Corsa 1.4", categoryId: 1, subcategoryId: 1 },
-    { id: 2, name: "Toyota MR2 MK1", categoryId: 1, subcategoryId: 2 },
-    { id: 3, name: "Peugeot 205GTi", categoryId: 1, subcategoryId: 3 },
-    { id: 4, name: "Vauxhall Corsa 1.4LS", categoryId: 1, subcategoryId: 1 },
-  ]
-
-  return items
+  return q
 }

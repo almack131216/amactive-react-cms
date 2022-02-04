@@ -1,6 +1,5 @@
 import { createContext, useEffect, useReducer } from "react"
 import { ACTIONS, crudReducer } from "./CrudReducer"
-import { getCategories, getSubcategories, getItems } from "./CrudActions"
 
 const CrudContext = createContext()
 
@@ -13,30 +12,10 @@ export const CrudProvider = ({ children }) => {
   }
 
   const [state, dispatch] = useReducer(crudReducer, initialState)
-  const { categories, subcategories, items, categoryId } = { ...state }
 
   // useEffect hooks
   useEffect(() => {
-    console.log("----------------")
-
-    const storedCategories = getCategories()
-    const storedSubcategories = getSubcategories()
-    const storedItems = getItems()
-
-    if (storedCategories) {
-      cxSetCategories(storedCategories)
-      console.log("[CX]---[useEffect] categories: ", storedCategories)
-    }
-    
-    if (storedSubcategories) {
-      cxSetSubcategories(storedSubcategories)
-      console.log("[CX]---[useEffect] subcategories: ", storedSubcategories)
-    }
-    
-    if (storedItems) {
-      cxSetItems(storedItems)
-      console.log("[CX]---[useEffect] categories: ", storedItems)
-    }
+    console.log("----------------[useEffect]-[CX]")
   }, [])
 
   const cxSetCategories = (getCategories) => {
@@ -63,12 +42,42 @@ export const CrudProvider = ({ children }) => {
     })
   }
 
+  const cxDeleteCategory = (getId) => {
+    console.log("[CX]---[cxDeleteCategory]", getId)
+    dispatch({
+      type: ACTIONS.DELETE_CATEGORY,
+      payload: getId,
+    })
+  }
+
+  const cxDeleteSubcategory = (getId) => {
+    console.log('[CX]---[cxDeleteSubcategory]', getId)
+    dispatch({
+      type: ACTIONS.DELETE_SUBCATEGORY,
+      payload: getId
+    })
+  }
+
+  const cxDeleteItem = (getId) => {
+    console.log('[CX]---[cxDeleteItem]', getId)
+    dispatch({
+      type: ACTIONS.DELETE_ITEM,
+      payload: getId
+    })
+  }
+
   return (
     <CrudContext.Provider
       value={{
         ...state,
         dispatch,
         ACTIONS,
+        cxSetCategories,
+        cxSetSubcategories,
+        cxSetItems,
+        cxDeleteCategory,
+        cxDeleteSubcategory,
+        cxDeleteItem
       }}
     >
       {children}

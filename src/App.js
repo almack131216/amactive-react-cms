@@ -5,12 +5,14 @@ import NavBar from "./components/NavBar"
 import Home from "./pages/Home"
 import Category from "./pages/Category"
 import CategoryAdd from "./pages/CategoryAdd"
+import CategoryEdit from "./pages/CategoryEdit"
 import CategoryList from "./pages/CategoryList"
 import Subcategory from "./pages/Subcategory"
 import SubcategoryAdd from "./pages/SubcategoryAdd"
 import SubcategoryList from "./pages/SubcategoryList"
 import Item from "./pages/Item"
 import ItemAdd from "./pages/ItemAdd"
+import ItemEdit from "./pages/ItemEdit"
 import ItemList from "./pages/ItemList"
 import Help from "./pages/Help"
 
@@ -23,14 +25,18 @@ function App() {
           <Routes>
             <Route exact path='/' element={<Home />} />
             <Route path='/category/:categoryId' element={<Category />} />
+            <Route path='/category/edit/:categoryId' element={<CategoryEdit />} />
             <Route path='/category/add' element={<CategoryAdd />} />
             <Route path='/categories' element={<CategoryList />} />
             <Route path='/subcategory/:subcategoryId' element={<Subcategory />} />
             <Route path='/subcategory/add' element={<SubcategoryAdd />} />
             <Route path='/subcategories' element={<SubcategoryList />} />
+            <Route path='/subcategories/c:categoryId' element={<SubcategoryList />} />
             <Route path='/item/:itemId' element={<Item />} />
+            <Route path='/item/edit/:itemId' element={<ItemEdit />} />
             <Route path='/item/add' element={<ItemAdd />} />
             <Route path='/items' element={<ItemList />} />
+            <Route path='/items/c:categoryId/sc:subcategoryId' element={<ItemList />} />
             <Route path='/help' element={<Help />} />
           </Routes>
         </Router>
