@@ -10,7 +10,7 @@ export const buildQuery = ({
   //[ITEMLIST] api-base.php?api=items&spec=Live&limit=10
   //[ITEM] api-base.php?api=items&spec=Live&id=38211
 
-  const base = "http://localhost:8080/amactive-react-cms/api-base.php"
+  const base = "http://localhost:8080/amactive-react-cms-api/api-base.php"
 
   let q = `${base}?api=${api}`
   if (type) q = `${q}&type=${type}`

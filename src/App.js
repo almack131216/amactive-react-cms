@@ -9,6 +9,7 @@ import CategoryEdit from "./pages/CategoryEdit"
 import CategoryList from "./pages/CategoryList"
 import Subcategory from "./pages/Subcategory"
 import SubcategoryAdd from "./pages/SubcategoryAdd"
+import SubcategoryEdit from "./pages/SubcategoryEdit"
 import SubcategoryList from "./pages/SubcategoryList"
 import Item from "./pages/Item"
 import ItemAdd from "./pages/ItemAdd"
@@ -29,6 +30,7 @@ function App() {
             <Route path='/category/add' element={<CategoryAdd />} />
             <Route path='/categories' element={<CategoryList />} />
             <Route path='/subcategory/:subcategoryId' element={<Subcategory />} />
+            <Route path='/subcategory/edit/:subcategoryId' element={<SubcategoryEdit />} />
             <Route path='/subcategory/add' element={<SubcategoryAdd />} />
             <Route path='/subcategories' element={<SubcategoryList />} />
             <Route path='/subcategories/c:categoryId' element={<SubcategoryList />} />
