@@ -15,7 +15,9 @@ function SubcategoryList() {
   console.log("[P]--SubcategoryList:", subcategories)
   const params = useParams()
 
-  useEffect(() => {
+  useEffect(() => {    
+    cxSetSubcategories([])
+
     const fetchSubcategories = async () => {
       const q = buildQuery({
         api: "subcategories",

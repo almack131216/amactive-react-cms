@@ -12,6 +12,8 @@ function ItemList() {
   const params = useParams()
 
   useEffect(() => {
+    cxSetItems([])
+
     const getItems = async () => {
       const q = buildQuery({
         api: "items",
