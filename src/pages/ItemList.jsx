@@ -12,6 +12,8 @@ function ItemList() {
   const params = useParams()
 
   useEffect(() => {
+    cxSetItems([])
+
     const getItems = async () => {
       const q = buildQuery({
         api: "items",
@@ -69,7 +71,7 @@ function ItemList() {
   return (
     <Container>
       <h1>Items</h1>
-      {items && (
+      {items.length > 0 && (
         <Table striped bordered hover>
           <thead>
             <tr>

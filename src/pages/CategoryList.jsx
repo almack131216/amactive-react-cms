@@ -77,7 +77,7 @@ function CategoryList() {
   return (
     <Container>
       <h1>Categories</h1>
-      {categories && (
+      {categories.length && (
         <Table striped bordered hover>
           <thead>
             <tr>

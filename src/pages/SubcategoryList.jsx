@@ -15,7 +15,9 @@ function SubcategoryList() {
   console.log("[P]--SubcategoryList:", subcategories)
   const params = useParams()
 
-  useEffect(() => {
+  useEffect(() => {    
+    cxSetSubcategories([])
+
     const fetchSubcategories = async () => {
       const q = buildQuery({
         api: "subcategories",
@@ -78,7 +80,7 @@ function SubcategoryList() {
   return (
     <Container>
       <h1>Subcategories</h1>
-      {subcategories && (
+      {subcategories.length > 0 && (
         <Table striped bordered hover>
           <thead>
             <tr>
