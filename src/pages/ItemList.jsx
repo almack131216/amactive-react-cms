@@ -29,6 +29,8 @@ function ItemList() {
         if (data.length) {
           cxSetItems(data)
           setLoading(false)
+        } else {
+          cxSetItems([])
         }
       } catch (error) {
         setLoading(false)
@@ -69,7 +71,7 @@ function ItemList() {
   return (
     <Container>
       <h1>Items</h1>
-      {items && (
+      {items.length > 0 && (
         <Table striped bordered hover>
           <thead>
             <tr>

@@ -31,6 +31,8 @@ function SubcategoryList() {
         if (data.length) {
           cxSetSubcategories(data)
           setLoading(false)
+        } else {
+          cxSetSubcategories([])
         }
       } catch (error) {
         setLoading(false)
@@ -78,7 +80,7 @@ function SubcategoryList() {
   return (
     <Container>
       <h1>Subcategories</h1>
-      {subcategories && (
+      {subcategories.length > 0 && (
         <Table striped bordered hover>
           <thead>
             <tr>
