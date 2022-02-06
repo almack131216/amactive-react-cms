@@ -1,6 +1,8 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom"
+import { Container } from "react-bootstrap"
 import { CrudProvider } from "./context/CrudContext"
 import NavBar from "./components/NavBar"
+import Breadcrumbs from "./components/Breadcrumb"
 // import Footer from "./components/Footer"
 import Home from "./pages/Home"
 import Category from "./pages/Category"
@@ -23,6 +25,9 @@ function App() {
       <CrudProvider>
         <Router>
         <NavBar />
+        <Container>
+
+        <Breadcrumbs />
           <Routes>
             <Route exact path='/' element={<Home />} />
             <Route path='/category/:categoryId' element={<Category />} />
@@ -41,6 +46,7 @@ function App() {
             <Route path='/items/c:categoryId/sc:subcategoryId' element={<ItemList />} />
             <Route path='/help' element={<Help />} />
           </Routes>
+        </Container>
         </Router>
         {/* <Footer /> */}
       </CrudProvider>

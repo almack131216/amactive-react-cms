@@ -1,22 +1,27 @@
 import { useEffect, useState, useContext } from "react"
 import { Link, useParams } from "react-router-dom"
 import { Container, Table, Button } from "react-bootstrap"
-import { buildQuery } from "../context/CrudActions"
+import { BREADCRUMBS, buildQuery } from "../context/CrudActions"
 import CrudContext from "../context/CrudContext"
 
 const axios = require("axios").default
 
 function SubcategoryList() {
-  const { subcategories, cxSetSubcategories, cxDeleteSubcategory } =
-    useContext(CrudContext)
+  const {
+    subcategories,
+    cxSetSubcategories,
+    cxDeleteSubcategory,
+    cxSetBreadcrumbs,
+    cxSetActiveCategory,
+  } = useContext(CrudContext)
   // eslint-disable-next-line
   const [loading, setLoading] = useState(false)
 
-  console.log("[P]--SubcategoryList:", subcategories)
+  // console.log("[P]--SubcategoryList:", subcategories)
   const params = useParams()
 
-  useEffect(() => {    
-    cxSetSubcategories([])
+  useEffect(() => {
+    let breadcrumbArr = [BREADCRUMBS.CATEGORY_LIST]
 
     const fetchSubcategories = async () => {
       const q = buildQuery({
@@ -28,10 +33,21 @@ function SubcategoryList() {
       try {
         const response = await axios.get(q)
         const data = response.data
-        console.log(data)
+        console.log("data:", data)
 
         if (data.length) {
+          cxSetActiveCategory({
+            id: data[0].categoryId,
+            name: data[0].categoryName,
+          })
+          breadcrumbArr.push({
+            type: "subcategory-list",
+            name: data[0].categoryName,
+            slug: `/subcategories/c${data[0].categoryId}`,
+          })
+
           cxSetSubcategories(data)
+          cxSetBreadcrumbs(breadcrumbArr)
           setLoading(false)
         } else {
           cxSetSubcategories([])

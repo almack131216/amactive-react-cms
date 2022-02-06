@@ -1,11 +1,13 @@
-import { useEffect, useState } from "react"
+import { useEffect, useState, useContext } from "react"
 import { useParams } from "react-router-dom"
-import { buildQuery } from "../context/CrudActions"
-import { Container, Form, Button, Row, Col } from "react-bootstrap"
+import { BREADCRUMBS, buildQuery } from "../context/CrudActions"
+import { Form, Button, Row, Col } from "react-bootstrap"
+import CrudContext from "../context/CrudContext"
 
 const axios = require("axios").default
 
 function CategoryEdit() {
+  const { cxSetActiveCategory, cxSetBreadcrumbs } = useContext(CrudContext)
   const params = useParams()
   const [loading, setLoading] = useState(false)
   const [formData, setFormData] = useState({})
@@ -47,6 +49,7 @@ function CategoryEdit() {
   // Fetch listing to edit
   useEffect(() => {
     setLoading(true)
+    let breadcrumbArr = [BREADCRUMBS.CATEGORY_LIST]
 
     const fetchItem = async () => {
       const q = buildQuery({
@@ -69,6 +72,14 @@ function CategoryEdit() {
           }
           console.log(dataLite)
           setFormData(dataLite)
+
+          breadcrumbArr.push({
+            active: true,
+            slug: `/category/edit/${parseInt(data[0].id)}`,
+            name: `EDIT: ${data[0].name}`,
+          })
+          cxSetBreadcrumbs(breadcrumbArr)
+          cxSetActiveCategory(dataLite)
           setLoading(false)
         }
       } catch (error) {
@@ -94,33 +105,41 @@ function CategoryEdit() {
 
   return (
     <>
-      <Container>
-        <h1>EDIT category: {id}</h1>
+      <h1>EDIT category: {id}</h1>
 
-        <Form>
-          <Form.Group as={Row} className='mb-3'>
-            <Form.Label column sm='2'>
-              Name
-            </Form.Label>
-            <Col sm='10'>
-              <Form.Control plaintext defaultValue={name} name='name' onChange={(e) => onChange(e)} />
-            </Col>
-          </Form.Group>
+      <Form>
+        <Form.Group as={Row} className='mb-3'>
+          <Form.Label column sm='2'>
+            Name
+          </Form.Label>
+          <Col sm='10'>
+            <Form.Control
+              plaintext
+              defaultValue={name}
+              name='name'
+              onChange={(e) => onChange(e)}
+            />
+          </Col>
+        </Form.Group>
 
-          <Form.Group as={Row} className='mb-3'>
-            <Form.Label column sm='2'>
-              Slug
-            </Form.Label>
-            <Col sm='10'>
-              <Form.Control plaintext defaultValue={slug} name='slug' onChange={(e) => onChange(e)}/>
-            </Col>
-          </Form.Group>
-        </Form>
+        <Form.Group as={Row} className='mb-3'>
+          <Form.Label column sm='2'>
+            Slug
+          </Form.Label>
+          <Col sm='10'>
+            <Form.Control
+              plaintext
+              defaultValue={slug}
+              name='slug'
+              onChange={(e) => onChange(e)}
+            />
+          </Col>
+        </Form.Group>
+      </Form>
 
-        <Button type='submit' onClick={() => updateForm({ id, name, slug })}>
-          update
-        </Button>
-      </Container>
+      <Button type='submit' onClick={() => updateForm({ id, name, slug })}>
+        update
+      </Button>
     </>
   )
 }

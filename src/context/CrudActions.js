@@ -1,4 +1,22 @@
-export const buildQuery = ({
+const BREADCRUMBS = {
+  CATEGORY_LIST: {
+    type: "category-list",
+    name: "Categories",
+    slug: `/categories`,
+  },
+  SUBCATEGORY_LIST: {
+    type: "category-list",
+    name: "Categories",
+    slug: `/categories`,
+  },
+  ITEM_LIST: {
+    type: "item-list",
+    name: "Items",
+    slug: `/items`,
+  },
+}
+
+const buildQuery = ({
   api,
   status,
   id,
@@ -17,8 +35,10 @@ export const buildQuery = ({
   if (id) q = `${q}&id=${id}`
   if (categoryId) q = `${q}&categoryId=${categoryId}`
   if (subcategoryId) q = `${q}&subcategoryId=${subcategoryId}`
-  if (typeof status !== 'undefined') q = `${q}&status=${status}`
+  if (typeof status !== "undefined") q = `${q}&status=${status}`
   if (limit) q = `${q}&limit=${limit}`
 
   return q
 }
+
+export { buildQuery, BREADCRUMBS }

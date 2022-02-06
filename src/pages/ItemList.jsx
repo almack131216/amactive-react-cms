@@ -1,18 +1,20 @@
 import { useEffect, useState, useContext } from "react"
 import { Container, Table, Button } from "react-bootstrap"
-import { buildQuery } from "../context/CrudActions"
+import { buildQuery, BREADCRUMBS } from "../context/CrudActions"
 import { Link, useParams } from "react-router-dom"
 import CrudContext from "../context/CrudContext"
 
 const axios = require("axios").default
 
 function ItemList() {
-  const { items, cxSetItems, cxDeleteItem } = useContext(CrudContext)
+  const { items, cxSetItems, cxDeleteItem, cxSetBreadcrumbs } =
+    useContext(CrudContext)
+  // eslint-disable-next-line
   const [loading, setLoading] = useState(false)
   const params = useParams()
 
   useEffect(() => {
-    cxSetItems([])
+    let breadcrumbArr = [BREADCRUMBS.CATEGORY_LIST]
 
     const getItems = async () => {
       const q = buildQuery({
@@ -23,6 +25,19 @@ function ItemList() {
       })
       console.log("Q: ", q)
 
+      params.categoryId &&
+        breadcrumbArr.push({
+          type: "category-active",
+          name: `c${params.categoryId}`,
+          slug: `/subcategories/c${params.categoryId}`,
+        })
+      params.subcategoryId &&
+        breadcrumbArr.push({
+          type: "subcategory-active",
+          name: `sc${params.subcategoryId}`,
+          slug: `/subcategories/c${params.subcategoryId}`,
+        })
+
       try {
         const response = await axios.get(q)
         const data = response.data
@@ -30,6 +45,10 @@ function ItemList() {
 
         if (data.length) {
           cxSetItems(data)
+
+          // breadcrumbArr.push(BREADCRUMBS.ITEM_LIST)
+          cxSetBreadcrumbs(breadcrumbArr)
+
           setLoading(false)
         } else {
           cxSetItems([])
@@ -41,6 +60,7 @@ function ItemList() {
     }
 
     getItems()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   const deleteItem = ({ name, id }) => {

@@ -1,20 +1,23 @@
 import { useEffect, useState, useContext } from "react"
 import { Link } from "react-router-dom"
-import { Container, Table, Button } from "react-bootstrap"
-import { buildQuery } from "../context/CrudActions"
+import { Table, Button } from "react-bootstrap"
+import { BREADCRUMBS, buildQuery } from "../context/CrudActions"
 import CrudContext from "../context/CrudContext"
 
 const axios = require("axios").default
 
 function CategoryList() {
-  const { categories, cxSetCategories, cxDeleteCategory } =
+  const { categories, cxSetCategories, cxDeleteCategory, cxSetBreadcrumbs } =
     useContext(CrudContext)
   // eslint-disable-next-line
   const [loading, setLoading] = useState(false)
+  // const [breadcrumb, setBreadcrumb] = useState([])
   console.log("[P]--CategoryList:", categories)
 
   useEffect(() => {
     setLoading(true)
+    let breadcrumbArr = [BREADCRUMBS.CATEGORY_LIST]
+    cxSetBreadcrumbs(breadcrumbArr)
 
     const fetchCategories = async () => {
       const q = buildQuery({
@@ -75,7 +78,7 @@ function CategoryList() {
   }
 
   return (
-    <Container>
+    <>
       <h1>Categories</h1>
       {categories.length && (
         <Table striped bordered hover>
@@ -126,7 +129,7 @@ function CategoryList() {
           </tbody>
         </Table>
       )}
-    </Container>
+    </>
   )
 }
 

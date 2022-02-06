@@ -1,7 +1,7 @@
-import React from 'react';
+import React from "react"
 
 function CategoryAdd() {
-  return <div>ADD Category</div>;
+  return <div>ADD Category</div>
 }
 
-export default CategoryAdd;
+export default CategoryAdd

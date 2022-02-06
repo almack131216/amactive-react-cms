@@ -1,7 +1,27 @@
-import React from 'react';
+import { useEffect, useContext } from "react"
+import { Link } from "react-router-dom"
+import CrudContext from "../context/CrudContext"
 
 function Home() {
-  return <div>Home</div>;
+  const { cxSetBreadcrumbs } = useContext(CrudContext)
+
+  useEffect(() => {
+    cxSetBreadcrumbs({})
+  }, [])
+
+  return (
+    <>
+      <h2>Home</h2>
+      <ul>
+        <li>
+          <Link to='/'>Home</Link>
+        </li>
+        <li>
+          <Link to='/categories'>Categories</Link>
+        </li>
+      </ul>
+    </>
+  )
 }
 
-export default Home;
+export default Home
