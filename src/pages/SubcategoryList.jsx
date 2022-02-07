@@ -98,6 +98,7 @@ function SubcategoryList() {
   return (
     <Container>
       <h1>Subcategories</h1>
+      <Link to='/subcategory/add'>Add Subcategory</Link>
       {subcategories.length > 0 && (
         <Table striped bordered hover>
           <thead>
