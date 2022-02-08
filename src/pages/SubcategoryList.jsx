@@ -1,10 +1,11 @@
-import { useEffect, useContext, useRef } from "react"
+import { useEffect, useState, useContext, useRef } from "react"
 import { Link, useParams } from "react-router-dom"
 import { Container, Table, Button } from "react-bootstrap"
 import { BREADCRUMBS, buildQuery } from "../context/CrudActions"
 import { useFetchCategories } from "../hooks/useFetch"
 import CrudContext from "../context/CrudContext"
 import { useDeleteCategory } from "../hooks/useDelete"
+import PageTitle from "../components/PageTitle"
 
 function SubcategoryList() {
   console.log("[P]--SubcategoryList")
@@ -12,10 +13,11 @@ function SubcategoryList() {
   let breadcrumbArr = [BREADCRUMBS.CATEGORY_LIST]
   const params = useParams()
   const isMounted = useRef(true)
+  const [categoryId, setCategoryId] = useState(params.categoryId ? params.categoryId : null)
 
   const q = buildQuery({
     api: "subcategories",
-    categoryId: params.categoryId ? params.categoryId : null,
+    categoryId: categoryId,
   })
 
   const { loading, error, subcategories } = useFetchCategories(q, {
@@ -62,12 +64,8 @@ function SubcategoryList() {
 
   return (
     <Container>
-      <h1>Subcategories</h1>
-      {subcategories[0] && (
-        <Link to={`/c${subcategories[0].categoryId}/subcategory/add`}>
-          Add Subcategory
-        </Link>
-      )}
+      <PageTitle title="Subcategories" addButton={{text: 'add subcategory', slug: `/c${categoryId}/subcategory/add`}} />
+
       {subcategories.length > 0 && (
         <>
           <Table striped bordered hover>

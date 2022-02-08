@@ -5,6 +5,7 @@ import CrudContext from "../context/CrudContext"
 import { BREADCRUMBS, buildQuery } from "../context/CrudActions"
 import { useFetchCategories } from "../hooks/useFetch"
 import { useDeleteCategory } from "../hooks/useDelete"
+import PageTitle from "../components/PageTitle"
 
 function CategoryList() {
   console.log("[P]--CategoryList")
@@ -34,11 +35,10 @@ function CategoryList() {
 
   return (
     <>
-      <h1>Categories</h1>
-      <Link to='/category/add'>Add Category</Link>
+      <PageTitle title="Categories" addButton={{text: 'add category', slug: `/category/add`}} />
       {categories.length && (
         <>
-        <h1>deletedId: {deletedId}</h1>
+        {/* <h1>deletedId: {deletedId}</h1> */}
         <Table striped bordered hover>
           <thead>
             <tr>
