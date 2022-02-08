@@ -2,12 +2,12 @@ const BREADCRUMBS = {
   CATEGORY_LIST: {
     type: "category-list",
     name: "Categories",
-    slug: `/categories`,
+    slug: `/category/list`,
   },
   SUBCATEGORY_LIST: {
     type: "category-list",
     name: "Categories",
-    slug: `/categories`,
+    slug: `/category/list`,
   },
   ITEM_LIST: {
     type: "item-list",

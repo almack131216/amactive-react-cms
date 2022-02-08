@@ -27,7 +27,7 @@ const crudReducer = (state, action) => {
     case ACTIONS.SET_SUBCATEGORIES:
       return {
         ...state,
-        subcategories: action.payload
+        subcategories: action.payload,
       }
 
     case ACTIONS.DELETE_CATEGORY:

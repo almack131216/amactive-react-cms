@@ -1,7 +1,7 @@
-import React from 'react';
+import React from "react"
 
 function ItemAdd() {
-  return <div>ADD Item</div>;
+  return <div>ADD Item</div>
 }
 
-export default ItemAdd;
+export default ItemAdd

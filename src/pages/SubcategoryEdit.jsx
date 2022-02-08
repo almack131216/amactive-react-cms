@@ -10,6 +10,7 @@ function SubcategoryEdit() {
   const params = useParams()
   const [loading, setLoading] = useState(false)
   const [formData, setFormData] = useState({})
+  const [subcategoryName, setSubcategoryName] = useState("")
 
   const { id, name, slug } = formData
 
@@ -21,6 +22,7 @@ function SubcategoryEdit() {
     })
     console.log("[POST] Q: ", q)
     console.log("name: ", formData.name)
+    setSubcategoryName(formData.name)
 
     let formDataNew = new FormData()
     formDataNew.append("id", id)
@@ -71,15 +73,18 @@ function SubcategoryEdit() {
           }
           console.log(dataLite)
           setFormData(dataLite)
+          setSubcategoryName(data[0].name)
 
           breadcrumbArr.push({
-            slug: `/subcategories/c${parseInt(data[0].categoryId)}`,
+            slug: `/c${parseInt(data[0].categoryId)}/subcategory/list`,
             name: `${data[0].categoryName}`,
           })
 
           breadcrumbArr.push({
-            slug: `/subcategory/edit/${parseInt(data[0].id)}`,
-            name: `EDIT: ${data[0].name}`,
+            slug: `/c${parseInt(
+              data[0].categoryId
+            )}/subcategory/edit/${parseInt(data[0].id)}`,
+            name: `EDIT: ${subcategoryName}`,
           })
           cxSetBreadcrumbs(breadcrumbArr)
 
@@ -92,7 +97,7 @@ function SubcategoryEdit() {
     }
 
     fetchItem()
-  }, [params.subcategoryId])
+  }, [params.subcategoryId, subcategoryName])
 
   if (loading) {
     return <h3>Loading...</h3>
@@ -108,7 +113,7 @@ function SubcategoryEdit() {
 
   return (
     <>
-      <h1>EDIT subcategory: {id}</h1>
+      <h1>EDIT subcategory: {subcategoryName}</h1>
 
       <Form>
         <Form.Group as={Row} className='mb-3'>

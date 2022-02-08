@@ -1,61 +1,41 @@
 import { useEffect, useState, useContext } from "react"
 import { useParams } from "react-router-dom"
-import { BREADCRUMBS, buildQuery } from "../context/CrudActions"
+import { BREADCRUMBS } from "../context/CrudActions"
 import { Form, Button, Row, Col } from "react-bootstrap"
 import CrudContext from "../context/CrudContext"
-
-const axios = require("axios").default
+import { useAddSubcategory } from "../hooks/useAdd"
 
 function SubcategoryAdd() {
-  const { cxSetActiveCategory, cxSetBreadcrumbs } = useContext(CrudContext)
-  const params = useParams()
-  const [loading, setLoading] = useState(false)
+  const { cxSetActiveCategory, cxSetBreadcrumbs, activeCategory } =
+    useContext(CrudContext)
   const [formData, setFormData] = useState({})
-  const [isSubmitting, setIsSubmitting] = useState(false)
 
-  const { id, name, slug } = formData
+  const params = useParams()
 
-  const addForm = ({ id, name, slug }) => {
-    setIsSubmitting(true)
-    const q = buildQuery({
-      api: "insert",
-      type: "subcategory",
-      id,
-    })
-    console.log("[POST] Q: ", q)
-    console.log("name: ", formData.name)
+  const [categoryId, setCategoryId] = useState(0)
 
-    let formDataNew = new FormData()
-    formDataNew.append("id", id)
-    formDataNew.append("categoryId", 2)
-    formDataNew.append("name", formData.name)
-    formDataNew.append("slug", formData.slug)
-    formDataNew.append("type", "subcategory")
+  const { name, slug } = formData
 
-    console.log("formData: ", formDataNew, name)
-
-    axios
-      .post(q, formDataNew)
-      .then(function (response) {
-        //handle success
-        console.log(response)
-        if (response.status === 200) {
-          alert("Subcategory added successfully.")
-        }
-        setIsSubmitting(false)
-      })
-      .catch(function (response) {
-        //handle error
-        console.log(response)
-        setIsSubmitting(false)
-      })
-  }
+  const { addForm, error, loading, isSubmitting } = useAddSubcategory(
+    name,
+    slug,
+    categoryId
+  )
 
   // Fetch listing to edit
   useEffect(() => {
-    let breadcrumbArr = [BREADCRUMBS.CATEGORY_LIST]   
-    cxSetBreadcrumbs(breadcrumbArr) 
+    let breadcrumbArr = [BREADCRUMBS.CATEGORY_LIST]
+    cxSetBreadcrumbs(breadcrumbArr)
+
+    console.log("categoryId: ", categoryId, activeCategory.id)
+    setCategoryId(activeCategory.id ? activeCategory.id : params.categoryId)
   }, [])
+
+  if (!categoryId) return <h1>Category not set {activeCategory.id}</h1>
+
+  if (error) {
+    return <h3>Error: {error}</h3>
+  }
 
   if (loading) {
     return <h3>Loading...</h3>
@@ -81,10 +61,10 @@ function SubcategoryAdd() {
           <Col sm='10'>
             <Form.Control
               plaintext
-              placeholder="Subcategory Name"
+              placeholder='Subcategory Name'
               name='name'
               onChange={(e) => onChange(e)}
-              value={name}
+              value={name || ""}
             />
           </Col>
         </Form.Group>
@@ -96,16 +76,20 @@ function SubcategoryAdd() {
           <Col sm='10'>
             <Form.Control
               plaintext
-              placeholder="subcategory-slug"
+              placeholder='subcategory-slug'
               name='slug'
               onChange={(e) => onChange(e)}
-              value={slug}
+              value={slug || ""}
             />
           </Col>
         </Form.Group>
       </Form>
-
-      <Button type='submit' onClick={() => addForm({ id, name, slug })}  disabled={isSubmitting}>
+      <Form.Control readOnly plaintext name='categoryId' value={categoryId} />
+      <Button
+        type='submit'
+        onClick={() => addForm({ name, slug, categoryId })}
+        disabled={isSubmitting}
+      >
         add
       </Button>
     </>

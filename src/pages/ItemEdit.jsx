@@ -49,7 +49,7 @@ function ItemEdit() {
           breadcrumbArr.push({
             type: "subcategory-active",
             name: data[0].sc_name,
-            slug: `/items/c${data[0].categoryId}/sc${data[0].sc_id}`,
+            slug: `/c${data[0].categoryId}/sc${data[0].sc_id}/item/list`,
           })
           breadcrumbArr.push({
             type: "item-edit",

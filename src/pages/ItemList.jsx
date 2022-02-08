@@ -29,13 +29,13 @@ function ItemList() {
         breadcrumbArr.push({
           type: "category-active",
           name: `c${params.categoryId}`,
-          slug: `/subcategories/c${params.categoryId}`,
+          slug: `/c${params.categoryId}/subcategory/list`,
         })
       params.subcategoryId &&
         breadcrumbArr.push({
           type: "subcategory-active",
           name: `sc${params.subcategoryId}`,
-          slug: `/subcategories/c${params.subcategoryId}`,
+          slug: `/c${params.subcategoryId}/subcategory/list`,
         })
 
       try {

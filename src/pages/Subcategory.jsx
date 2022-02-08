@@ -1,9 +1,9 @@
-import {useParams} from "react-router-dom"
+import { useParams } from "react-router-dom"
 
 function Subcategory() {
-    const params = useParams()
+  const params = useParams()
 
-  return <div>Subcategory: {params.subcategoryId}</div>;
+  return <div>Subcategory: {params.subcategoryId}</div>
 }
 
-export default Subcategory;
+export default Subcategory

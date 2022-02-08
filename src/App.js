@@ -24,29 +24,52 @@ function App() {
     <>
       <CrudProvider>
         <Router>
-        <NavBar />
-        <Container>
-
-        <Breadcrumbs />
-          <Routes>
-            <Route exact path='/' element={<Home />} />
-            <Route path='/category/:categoryId' element={<Category />} />
-            <Route path='/category/edit/:categoryId' element={<CategoryEdit />} />
-            <Route path='/category/add' element={<CategoryAdd />} />
-            <Route path='/categories' element={<CategoryList />} />
-            <Route path='/subcategory/:subcategoryId' element={<Subcategory />} />
-            <Route path='/subcategory/edit/:subcategoryId' element={<SubcategoryEdit />} />
-            <Route path='/subcategory/add' element={<SubcategoryAdd />} />
-            <Route path='/subcategories' element={<SubcategoryList />} />
-            <Route path='/subcategories/c:categoryId' element={<SubcategoryList />} />
-            <Route path='/item/:itemId' element={<Item />} />
-            <Route path='/item/edit/:itemId' element={<ItemEdit />} />
-            <Route path='/item/add' element={<ItemAdd />} />
-            <Route path='/items' element={<ItemList />} />
-            <Route path='/items/c:categoryId/sc:subcategoryId' element={<ItemList />} />
-            <Route path='/help' element={<Help />} />
-          </Routes>
-        </Container>
+          <NavBar />
+          <Container>
+            <Breadcrumbs />
+            <Routes>
+              <Route exact path='/' element={<Home />} />
+              {/* list (root) / list (c) / list (sc) / add / show / edit  */}
+              {/* Category */}
+              <Route path='/category/list' element={<CategoryList />} />
+              <Route path='/category/:categoryId' element={<Category />} />
+              <Route
+                path='/category/edit/:categoryId'
+                element={<CategoryEdit />}
+              />
+              <Route path='/category/add' element={<CategoryAdd />} />
+              {/* Subcategory */}
+              <Route path='/subcategory/list' element={<SubcategoryList />} />
+              <Route
+                path='/c:categoryId/subcategory/list'
+                element={<SubcategoryList />}
+              />
+              <Route
+                path='/c:categoryId/subcategory/add'
+                element={<SubcategoryAdd />}
+              />
+              <Route
+                path='/c:categoryId/subcategory/edit/:subcategoryId'
+                element={<SubcategoryEdit />}
+              />
+              <Route
+                path='/subcategory/show/:subcategoryId'
+                element={<Subcategory />}
+              />
+              {/* Item */}
+              <Route path='/item/list' element={<ItemList />} />
+              <Route path='/c:categoryId/item/list' element={<ItemList />} />
+              <Route
+                path='/c:categoryId/sc:subcategoryId/item/list'
+                element={<ItemList />}
+              />
+              <Route path='/item/add' element={<ItemAdd />} />
+              <Route path='/item/show/:itemId' element={<Item />} />
+              <Route path='/item/edit/:itemId' element={<ItemEdit />} />
+              {/* Help */}
+              <Route path='/help' element={<Help />} />
+            </Routes>
+          </Container>
         </Router>
         {/* <Footer /> */}
       </CrudProvider>

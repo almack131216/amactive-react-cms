@@ -15,10 +15,10 @@ function NavBar() {
               <Nav.Link as={Link} to='/'>
                 Home
               </Nav.Link>
-              <Nav.Link as={Link} to='/categories'>
+              <Nav.Link as={Link} to='/category/list'>
                 Categories
               </Nav.Link>
-              <Nav.Link as={Link} to='/subcategories'>
+              <Nav.Link as={Link} to='/subcategory/list'>
                 Subcategories
               </Nav.Link>
               <Nav.Link as={Link} to='/items'>

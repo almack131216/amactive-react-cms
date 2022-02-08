@@ -1,85 +1,37 @@
-import { useEffect, useState, useContext } from "react"
+import { useEffect, useContext } from "react"
 import { Link } from "react-router-dom"
 import { Table, Button } from "react-bootstrap"
-import { BREADCRUMBS, buildQuery } from "../context/CrudActions"
 import CrudContext from "../context/CrudContext"
-
-const axios = require("axios").default
+import { BREADCRUMBS, buildQuery } from "../context/CrudActions"
+import { useFetchCategories } from "../hooks/useFetch"
+import { useDeleteCategory } from "../hooks/useDelete"
 
 function CategoryList() {
-  const { categories, cxSetCategories, cxDeleteCategory, cxSetBreadcrumbs } =
-    useContext(CrudContext)
-  // eslint-disable-next-line
-  const [loading, setLoading] = useState(false)
-  // const [breadcrumb, setBreadcrumb] = useState([])
-  console.log("[P]--CategoryList:", categories)
+  console.log("[P]--CategoryList")
+  const { cxSetBreadcrumbs } = useContext(CrudContext)
 
   useEffect(() => {
-    setLoading(true)
     let breadcrumbArr = [BREADCRUMBS.CATEGORY_LIST]
     cxSetBreadcrumbs(breadcrumbArr)
-
-    const fetchCategories = async () => {
-      const q = buildQuery({
-        api: "categories",
-      })
-      console.log("Q: ", q)
-
-      try {
-        const response = await axios.get(q)
-        const data = response.data
-        console.log(data)
-
-        if (data.length) {
-          cxSetCategories(data)
-          setLoading(false)
-        }
-      } catch (error) {
-        setLoading(false)
-        console.error(error)
-      }
-    }
-
-    fetchCategories()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
-  const deleteCategory = ({ name, id }) => {
-    // `Are you sure want to delete?\r\n${name}\r\n\r\nThis category has ${subcategoryCount} subcategories and ${itemCount} items.
-    const q = buildQuery({
-      api: "delete",
-      type: "category",
-      id,
-    })
-    console.log("Q: ", q)
+  const q = buildQuery({
+    api: "categories",
+  })
+  console.log("Q: ", q)
 
-    if (
-      window.confirm(
-        `Are you sure want to delete?\r\n${name}\r\n\r\nThis category may have items attached.`
-      )
-    ) {
-      axios({
-        method: "post",
-        url: q,
-      })
-        .then(function (response) {
-          //handle success
-          console.log(response)
-          if (response.status === 200) {
-            alert("Category deleted successfully")
-            cxDeleteCategory(id)
-          }
-        })
-        .catch(function (response) {
-          //handle error
-          console.log(response)
-        })
-    }
-  }
+  const { loading, error, categories } = useFetchCategories(q, {})
+
+  const { deleteCategory } = useDeleteCategory()
+
+  if (error) return <h1>Error: {error}</h1>
+
+  if (loading) return <h1>Loading...</h1>
 
   return (
     <>
       <h1>Categories</h1>
+      <Link to='/category/add'>Add Category</Link>
       {categories.length && (
         <Table striped bordered hover>
           <thead>
@@ -95,7 +47,7 @@ function CategoryList() {
                 <tr key={index}>
                   <td>{category.id}</td>
                   <td>
-                    <Link to={`/subcategories/c${category.id}`}>
+                    <Link to={`/c${category.id}/subcategory/list`}>
                       {category.name}
                     </Link>
                   </td>

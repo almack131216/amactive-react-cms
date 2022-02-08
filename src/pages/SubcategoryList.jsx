@@ -1,66 +1,46 @@
-import { useEffect, useState, useContext } from "react"
+import { useEffect, useContext, useRef } from "react"
 import { Link, useParams } from "react-router-dom"
 import { Container, Table, Button } from "react-bootstrap"
 import { BREADCRUMBS, buildQuery } from "../context/CrudActions"
+import { useFetchSubcategories } from "../hooks/useFetch"
 import CrudContext from "../context/CrudContext"
 
 const axios = require("axios").default
 
 function SubcategoryList() {
-  const {
-    subcategories,
-    cxSetSubcategories,
-    cxDeleteSubcategory,
-    cxSetBreadcrumbs,
-    cxSetActiveCategory,
-  } = useContext(CrudContext)
-  // eslint-disable-next-line
-  const [loading, setLoading] = useState(false)
-
   // console.log("[P]--SubcategoryList:", subcategories)
+  const { cxSetBreadcrumbs } = useContext(CrudContext)
+  let breadcrumbArr = [BREADCRUMBS.CATEGORY_LIST]
   const params = useParams()
+  const isMounted = useRef(true)
+
+  const q = buildQuery({
+    api: "subcategories",
+    categoryId: params.categoryId ? params.categoryId : null,
+  })
+
+  const { loading, error, subcategories, cxDeleteSubcategory } =
+    useFetchSubcategories(q, {})
 
   useEffect(() => {
-    let breadcrumbArr = [BREADCRUMBS.CATEGORY_LIST]
-
-    const fetchSubcategories = async () => {
-      const q = buildQuery({
-        api: "subcategories",
-        categoryId: params.categoryId ? params.categoryId : null,
+    if (!subcategories.length) return
+    if (isMounted) {
+      breadcrumbArr.push({
+        type: "subcategory-list",
+        name: subcategories[0].categoryName,
+        slug: `/c${subcategories[0].categoryId}/subcategory/list`,
       })
-      console.log("Q: ", q)
 
-      try {
-        const response = await axios.get(q)
-        const data = response.data
-        console.log("data:", data)
-
-        if (data.length) {
-          cxSetActiveCategory({
-            id: data[0].categoryId,
-            name: data[0].categoryName,
-          })
-          breadcrumbArr.push({
-            type: "subcategory-list",
-            name: data[0].categoryName,
-            slug: `/subcategories/c${data[0].categoryId}`,
-          })
-
-          cxSetSubcategories(data)
-          cxSetBreadcrumbs(breadcrumbArr)
-          setLoading(false)
-        } else {
-          cxSetSubcategories([])
-        }
-      } catch (error) {
-        setLoading(false)
-        console.error(error)
+      if (breadcrumbArr.length) {
+        console.log("LOAD BREADCRUMBS...", breadcrumbArr)
+        cxSetBreadcrumbs(breadcrumbArr)
       }
     }
 
-    fetchSubcategories()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+    return () => {
+      isMounted.current = false
+    }
+  }, [isMounted, subcategories])
 
   const deleteSubcategory = ({ name, id }) => {
     // `Are you sure want to delete?\r\n${name}\r\n\r\nThis category has ${subcategoryCount} subcategories and ${itemCount} items.
@@ -95,6 +75,18 @@ function SubcategoryList() {
     }
   }
 
+  if (error) {
+    return <h1>Error: {error}</h1>
+  }
+
+  if (loading) {
+    return <h1>Loading...</h1>
+  }
+
+  if (subcategories.length) {
+    console.log("Subcategories loaded...", subcategories[0].categoryName)
+  }
+
   return (
     <Container>
       <h1>Subcategories</h1>
@@ -115,14 +107,14 @@ function SubcategoryList() {
                   <td>{subcategory.id}</td>
                   <td>
                     <Link
-                      to={`/items/c${subcategory.categoryId}/sc${subcategory.id}`}
+                      to={`/c${subcategory.categoryId}/sc${subcategory.id}/item/list`}
                     >
                       {subcategory.name}
                     </Link>
                   </td>
                   <td>
                     <Link
-                      to={`/subcategory/edit/${subcategory.id}`}
+                      to={`/c${subcategory.categoryId}/subcategory/edit/${subcategory.id}`}
                       className='btn btn-outline-primary btn-sm'
                     >
                       Edit
