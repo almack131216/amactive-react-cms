@@ -3,32 +3,26 @@ import { useParams } from "react-router-dom"
 import { BREADCRUMBS } from "../context/CrudActions"
 import { Form, Button, Row, Col } from "react-bootstrap"
 import CrudContext from "../context/CrudContext"
-import { useAddSubcategory } from "../hooks/useAdd"
+import { useAddCategory } from "../hooks/useAdd"
 
 function SubcategoryAdd() {
   const { cxSetActiveCategory, cxSetBreadcrumbs, activeCategory } =
     useContext(CrudContext)
-  const [formData, setFormData] = useState({})
-
   const params = useParams()
-
+  const [formData, setFormData] = useState({})
   const [categoryId, setCategoryId] = useState(0)
-
+  
   const { name, slug } = formData
 
-  const { addForm, error, loading, isSubmitting } = useAddSubcategory(
-    name,
-    slug,
-    categoryId
-  )
+  const { addForm, error, loading, isSubmitting } = useAddCategory()
 
   // Fetch listing to edit
   useEffect(() => {
     let breadcrumbArr = [BREADCRUMBS.CATEGORY_LIST]
     cxSetBreadcrumbs(breadcrumbArr)
 
-    console.log("categoryId: ", categoryId, activeCategory.id)
     setCategoryId(activeCategory.id ? activeCategory.id : params.categoryId)
+  console.log("categoryId: ", categoryId, activeCategory.id)
   }, [])
 
   if (!categoryId) return <h1>Category not set {activeCategory.id}</h1>
@@ -51,7 +45,7 @@ function SubcategoryAdd() {
 
   return (
     <>
-      <h1>ADD subcategory</h1>
+      <h1>ADD subcategory, cat: {categoryId}</h1>
 
       <Form>
         <Form.Group as={Row} className='mb-3'>
@@ -87,7 +81,7 @@ function SubcategoryAdd() {
       <Form.Control readOnly plaintext name='categoryId' value={categoryId} />
       <Button
         type='submit'
-        onClick={() => addForm({ name, slug, categoryId })}
+        onClick={() => addForm({ name, slug, categoryId, type: "subcategory" })}
         disabled={isSubmitting}
       >
         add

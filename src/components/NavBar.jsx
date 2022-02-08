@@ -21,7 +21,7 @@ function NavBar() {
               <Nav.Link as={Link} to='/subcategory/list'>
                 Subcategories
               </Nav.Link>
-              <Nav.Link as={Link} to='/items'>
+              <Nav.Link as={Link} to='/item/list'>
                 Items
               </Nav.Link>
               <NavDropdown title='ADD' id='basic-nav-dropdown'>

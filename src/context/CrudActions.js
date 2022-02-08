@@ -12,7 +12,7 @@ const BREADCRUMBS = {
   ITEM_LIST: {
     type: "item-list",
     name: "Items",
-    slug: `/items`,
+    slug: `/item/list`,
   },
 }
 

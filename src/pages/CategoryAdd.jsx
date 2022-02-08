@@ -9,7 +9,7 @@ function CategoryAdd() {
   const [formData, setFormData] = useState({})
   const { name, slug } = formData
 
-  const { addForm, error, loading, isSubmitting } = useAddCategory(name, slug)
+  const { addForm, error, loading, isSubmitting } = useAddCategory()
 
   // Fetch listing to edit
   useEffect(() => {
@@ -71,7 +71,7 @@ function CategoryAdd() {
 
       <Button
         type='submit'
-        onClick={() => addForm({ name, slug })}
+        onClick={() => addForm({ name, slug, type: 'category' })}
         disabled={isSubmitting}
       >
         add

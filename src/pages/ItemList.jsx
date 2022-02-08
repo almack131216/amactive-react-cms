@@ -1,30 +1,34 @@
-import { useEffect, useState, useContext } from "react"
+import { useEffect, useContext, useRef } from "react"
 import { Container, Table, Button } from "react-bootstrap"
 import { buildQuery, BREADCRUMBS } from "../context/CrudActions"
+import { useFetchItems } from "../hooks/useFetch"
 import { Link, useParams } from "react-router-dom"
 import CrudContext from "../context/CrudContext"
-
-const axios = require("axios").default
+import { useDeleteItem } from "../hooks/useDelete"
 
 function ItemList() {
-  const { items, cxSetItems, cxDeleteItem, cxSetBreadcrumbs } =
-    useContext(CrudContext)
+  console.log("[P]--ItemList")
+  const { cxSetBreadcrumbs } = useContext(CrudContext)
+  let breadcrumbArr = [BREADCRUMBS.CATEGORY_LIST]
   // eslint-disable-next-line
-  const [loading, setLoading] = useState(false)
   const params = useParams()
+  const isMounted = useRef(true)
+
+  const q = buildQuery({
+    api: "items",
+    categoryId: params.categoryId ? params.categoryId : null,
+    subcategoryId: params.subcategoryId ? params.subcategoryId : null,
+    limit: 10,
+  })
+  console.log("Q: ", q)
+
+  const { loading, error, items } = useFetchItems(q, {})
+
+  const { deleteItem, deletedId } = useDeleteItem()
 
   useEffect(() => {
-    let breadcrumbArr = [BREADCRUMBS.CATEGORY_LIST]
-
-    const getItems = async () => {
-      const q = buildQuery({
-        api: "items",
-        categoryId: params.categoryId ? params.categoryId : null,
-        subcategoryId: params.subcategoryId ? params.subcategoryId : null,
-        limit: 10,
-      })
-      console.log("Q: ", q)
-
+    if (!items.length) return
+    if (isMounted) {
       params.categoryId &&
         breadcrumbArr.push({
           type: "category-active",
@@ -38,55 +42,31 @@ function ItemList() {
           slug: `/c${params.subcategoryId}/subcategory/list`,
         })
 
-      try {
-        const response = await axios.get(q)
-        const data = response.data
-        console.log(data[0])
-
-        if (data.length) {
-          cxSetItems(data)
-
-          // breadcrumbArr.push(BREADCRUMBS.ITEM_LIST)
-          cxSetBreadcrumbs(breadcrumbArr)
-
-          setLoading(false)
-        } else {
-          cxSetItems([])
-        }
-      } catch (error) {
-        setLoading(false)
-        console.error(error)
+      if (breadcrumbArr.length) {
+        console.log("LOAD BREADCRUMBS...", breadcrumbArr)
+        cxSetBreadcrumbs(breadcrumbArr)
       }
     }
 
-    getItems()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
-
-  const deleteItem = ({ name, id }) => {
-    // 1. Build API url
-    const q = buildQuery({
-      api: "delete",
-      type: "item",
-      id,
-    })
-
-    // 2. Confirm window... DO
-    if (
-      window.confirm(`Are you sure you want to delete this item?\r\n${name}`)
-    ) {
-      axios({
-        method: "post",
-        url: q,
-      }).then((response) => {
-        // handle success
-        console.log(response)
-        if (response.status === 200) {
-          alert("Item successfully deleted")
-          cxDeleteItem(id)
-        }
-      })
+    return () => {
+      isMounted.current = false
     }
+  }, [isMounted, items])
+
+  if (error) {
+    return <h1>Error: {error}</h1>
+  }
+
+  if (loading) {
+    return <h1>Loading...</h1>
+  }
+
+  if (deletedId) {
+    console.log("deletedId: ", deletedId)
+  }
+
+  if (items !== {}) {
+    console.log("Subcategories loaded...", items)
   }
 
   console.log("[P]--ItemList:", items[0])
@@ -124,6 +104,7 @@ function ItemList() {
                         deleteItem({
                           name: item.name,
                           id: item.id,
+                          type: "item",
                         })
                       }
                     >

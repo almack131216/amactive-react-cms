@@ -4,10 +4,12 @@ import CrudContext from "../context/CrudContext"
 const axios = require("axios").default
 
 function useFetchCategories(url, options) {
-  const { categories, cxSetCategories } = useContext(CrudContext)
+  const { categories, cxSetCategories, cxSetActiveCategory, subcategories, cxSetSubcategories } = useContext(CrudContext)
 
-  const [loading, setLoading] = useState(true)
+  const [loading, setLoading] = useState(false)
   const [error, setError] = useState(null)
+
+  const {type} = options
   // const [data, setData] = useState(null)
 
   useEffect(() => {
@@ -18,9 +20,17 @@ function useFetchCategories(url, options) {
         console.log("data:", data)
 
         if (data.length) {
-          cxSetCategories(data)
+          type === "category" && cxSetCategories(data)
+          if(type === "subcategory"){
+            cxSetActiveCategory({
+              id: data[0].categoryId,
+              name: data[0].categoryName,
+            })
+            cxSetSubcategories(data)
+          }
         } else {
-          cxSetCategories([])
+          type === "category" && cxSetCategories([])
+          type === "subcategory" && cxSetSubcategories([])
         }
         setLoading(false)
       } catch (error) {
@@ -35,16 +45,13 @@ function useFetchCategories(url, options) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
-  return { loading, error, categories }
+  return { loading, error, categories, subcategories }
 }
 
-function useFetchSubcategories(url, options) {
-  const { cxSetActiveCategory, subcategories, cxSetSubcategories } =
-    useContext(CrudContext)
-
-  const [loading, setLoading] = useState(true)
+function useFetchItems(url, options) {
+  const { items, cxSetItems } = useContext(CrudContext)
+  const [loading, setLoading] = useState(false)
   const [error, setError] = useState(null)
-  // const [data, setData] = useState(null)
 
   useEffect(() => {
     const fetchData = async () => {
@@ -54,13 +61,9 @@ function useFetchSubcategories(url, options) {
         console.log("data:", data)
 
         if (data.length) {
-          cxSetActiveCategory({
-            id: data[0].categoryId,
-            name: data[0].categoryName,
-          })
-          cxSetSubcategories(data)
+          cxSetItems(data)
         } else {
-          cxSetSubcategories([])
+          cxSetItems([])
         }
         setLoading(false)
       } catch (error) {
@@ -75,7 +78,7 @@ function useFetchSubcategories(url, options) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
-  return { loading, error, subcategories }
+  return { loading, error, items }
 }
 
-export { useFetchCategories, useFetchSubcategories }
+export { useFetchCategories, useFetchItems }

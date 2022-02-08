@@ -3,21 +3,22 @@ import { buildQuery } from "../context/CrudActions"
 import CrudContext from "../context/CrudContext"
 const axios = require("axios").default
 
-function useDeleteCategory(id, name) {
-  const { cxDeleteCategory } = useContext(CrudContext)
+function useDeleteCategory() {
+  const { cxDeleteCategory, cxDeleteSubcategory } = useContext(CrudContext)
+  const [deletedId, setDeletedId] = useState(null)
 
-  const deleteCategory = ({ name, id }) => {
+  const deleteCategory = ({ name, id, type, categoryId }) => {
     // `Are you sure want to delete?\r\n${name}\r\n\r\nThis category has ${subcategoryCount} subcategories and ${itemCount} items.
     const q = buildQuery({
       api: "delete",
-      type: "category",
+      type: type,
       id,
     })
     console.log("Q: ", q)
 
     if (
       window.confirm(
-        `Are you sure want to delete?\r\n${name}\r\n\r\nThis category may have items attached.`
+        `Are you sure want to delete this ${type}?\r\n${name}\r\n\r\nThis ${type} may have items attached.`
       )
     ) {
       axios({
@@ -28,8 +29,10 @@ function useDeleteCategory(id, name) {
           //handle success
           console.log(response)
           if (response.status === 200) {
-            alert("Category deleted successfully")
-            cxDeleteCategory(id)
+            alert(`${name} deleted successfully`)
+            setDeletedId(id)
+            type === "category" && cxDeleteCategory(id)
+            type === "subcategory" && cxDeleteSubcategory(id)
           }
         })
         .catch(function (response) {
@@ -39,7 +42,48 @@ function useDeleteCategory(id, name) {
     }
   }
 
-  return { deleteCategory }
+  return { deleteCategory, deletedId }
 }
 
-export { useDeleteCategory }
+function useDeleteItem() {
+  const { cxDeleteItem } = useContext(CrudContext)
+  const [deletedId, setDeletedId] = useState(null)
+
+  const deleteItem = ({ name, id, type, categoryId }) => {
+    // `Are you sure want to delete?\r\n${name}\r\n\r\nThis category has ${subcategoryCount} subcategories and ${itemCount} items.
+    const q = buildQuery({
+      api: "delete",
+      type: type,
+      id,
+    })
+    console.log("Q: ", q)
+
+    if (
+      window.confirm(
+        `Are you sure want to delete this ${type}?\r\n${name}`
+      )
+    ) {
+      axios({
+        method: "post",
+        url: q,
+      })
+        .then(function (response) {
+          //handle success
+          console.log(response)
+          if (response.status === 200) {
+            alert(`${name} deleted successfully`)
+            setDeletedId(id)
+            cxDeleteItem(id)
+          }
+        })
+        .catch(function (response) {
+          //handle error
+          console.log(response)
+        })
+    }
+  }
+
+  return { deleteItem, deletedId }
+}
+
+export { useDeleteCategory, useDeleteItem }

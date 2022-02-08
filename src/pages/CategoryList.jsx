@@ -20,19 +20,25 @@ function CategoryList() {
   })
   console.log("Q: ", q)
 
-  const { loading, error, categories } = useFetchCategories(q, {})
+  const { loading, error, categories } = useFetchCategories(q, {type: "category"})
 
-  const { deleteCategory } = useDeleteCategory()
+  const { deleteCategory, deletedId } = useDeleteCategory()
 
   if (error) return <h1>Error: {error}</h1>
 
   if (loading) return <h1>Loading...</h1>
+
+  if(deletedId){
+    console.log('deletedId: ', deletedId);
+  }
 
   return (
     <>
       <h1>Categories</h1>
       <Link to='/category/add'>Add Category</Link>
       {categories.length && (
+        <>
+        <h1>deletedId: {deletedId}</h1>
         <Table striped bordered hover>
           <thead>
             <tr>
@@ -67,6 +73,7 @@ function CategoryList() {
                         deleteCategory({
                           name: category.name,
                           id: category.id,
+                          type: "category"
                           // subcategoryCount: category.subcategoryCount,
                           // itemCount: category.itemCount
                         })
@@ -80,6 +87,7 @@ function CategoryList() {
             })}
           </tbody>
         </Table>
+      </>
       )}
     </>
   )
