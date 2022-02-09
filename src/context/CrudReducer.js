@@ -10,6 +10,7 @@ const ACTIONS = {
   SET_PAGETYPE: "set-pageType",
   SET_BREADCRUMBS: "set-breadcrumbs",
   SET_ACTIVE_CATEGORY: "set-activeCategory",
+  SET_ACTIVE_SUBCATEGORY: "set-activeSubcategory",
 }
 
 const crudReducer = (state, action) => {
@@ -20,6 +21,9 @@ const crudReducer = (state, action) => {
 
     case ACTIONS.SET_ACTIVE_CATEGORY:
       return { ...state, activeCategory: action.payload }
+
+    case ACTIONS.SET_ACTIVE_SUBCATEGORY:
+      return { ...state, activeSubcategory: action.payload }
 
     case ACTIONS.SET_CATEGORIES:
       return { ...state, categories: action.payload }

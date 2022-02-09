@@ -8,7 +8,7 @@ import { useDeleteItem } from "../hooks/useDelete"
 
 function ItemList() {
   console.log("[P]--ItemList")
-  const { cxSetBreadcrumbs } = useContext(CrudContext)
+  const { cxSetBreadcrumbs, activeCategory, activeSubcategory } = useContext(CrudContext)
   let breadcrumbArr = [BREADCRUMBS.CATEGORY_LIST]
   // eslint-disable-next-line
   const params = useParams()
@@ -32,14 +32,14 @@ function ItemList() {
       params.categoryId &&
         breadcrumbArr.push({
           type: "category-active",
-          name: `c${params.categoryId}`,
-          slug: `/c${params.categoryId}/subcategory/list`,
+          name: activeCategory.name ? activeCategory.name : `c${params.categoryId}`,
+          slug: `/c${activeCategory.id ? activeCategory.id : params.categoryId}/subcategory/list`,
         })
       params.subcategoryId &&
         breadcrumbArr.push({
           type: "subcategory-active",
-          name: `sc${params.subcategoryId}`,
-          slug: `/c${params.subcategoryId}/subcategory/list`,
+          name: activeSubcategory.name ? activeSubcategory.name : `sc${params.subcategoryId}`,
+          slug: `/c${activeSubcategory.id ? activeSubcategory.id : params.subcategoryId}/subcategory/list`,
         })
 
       if (breadcrumbArr.length) {

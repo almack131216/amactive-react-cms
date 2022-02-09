@@ -11,6 +11,7 @@ export const CrudProvider = ({ children }) => {
     pageType: "",
     breadcrumbs: [],
     activeCategory: {},
+    activeSubcategory: {},
   }
 
   const [state, dispatch] = useReducer(crudReducer, initialState)
@@ -25,6 +26,14 @@ export const CrudProvider = ({ children }) => {
     dispatch({
       type: ACTIONS.SET_ACTIVE_CATEGORY,
       payload: getCategoryArr,
+    })
+  }
+
+  const cxSetActiveSubcategory = (getSubcategoryArr) => {
+    // console.log("[CX]---[cxSetActiveSubcategory]", getCategoryArr)
+    dispatch({
+      type: ACTIONS.SET_ACTIVE_SUBCATEGORY,
+      payload: getSubcategoryArr,
     })
   }
 
@@ -98,6 +107,7 @@ export const CrudProvider = ({ children }) => {
         cxDeleteItem,
         cxSetBreadcrumbs,
         cxSetActiveCategory,
+        cxSetActiveSubcategory,
       }}
     >
       {children}

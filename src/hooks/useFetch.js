@@ -1,17 +1,23 @@
 import { useState, useEffect, useContext } from "react"
-import { BREADCRUMBS } from "../context/CrudActions"
 import CrudContext from "../context/CrudContext"
 const axios = require("axios").default
 
 function useFetchCategories(url, options) {
-  const { categories, cxSetCategories, cxSetActiveCategory, subcategories, cxSetSubcategories } = useContext(CrudContext)
-
+  console.log("[useFetch] useFetchCategories | url:", url)
+  // 1 CONTEXT functions & props
+  const {
+    categories,
+    cxSetCategories,
+    cxSetActiveCategory,
+    subcategories,
+    cxSetSubcategories,
+  } = useContext(CrudContext)
+  // 2 STATES
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState(null)
-
-  const {type} = options
-  // const [data, setData] = useState(null)
-
+  // 3 OPTIONS ({type: "category", categoryId: 2})
+  const { type } = options
+  // 4 LOAD useEffect
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -21,7 +27,7 @@ function useFetchCategories(url, options) {
 
         if (data.length) {
           type === "category" && cxSetCategories(data)
-          if(type === "subcategory"){
+          if (type === "subcategory") {
             cxSetActiveCategory({
               id: data[0].categoryId,
               name: data[0].categoryName,
@@ -41,15 +47,18 @@ function useFetchCategories(url, options) {
       }
     }
 
+    // TRIGGER function
     fetchData()
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
+  // END return props
   return { loading, error, categories, subcategories }
 }
 
 function useFetchItems(url, options) {
-  const { items, cxSetItems } = useContext(CrudContext)
+  const { items, cxSetItems, cxSetActiveCategory, cxSetActiveSubcategory } =
+    useContext(CrudContext)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState(null)
 
@@ -61,6 +70,10 @@ function useFetchItems(url, options) {
         console.log("data:", data)
 
         if (data.length) {
+          cxSetActiveSubcategory({
+            id: data[0].subcategoryId,
+            name: data[0].subcategoryName,
+          })
           cxSetItems(data)
         } else {
           cxSetItems([])
