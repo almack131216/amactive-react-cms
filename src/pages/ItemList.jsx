@@ -83,9 +83,9 @@ function ItemList() {
             </tr>
           </thead>
           <tbody>
-            {items.map((item, index) => {
+            {items.map((item) => {
               return (
-                <tr key={index}>
+                <tr key={item.id}>
                   <td>{item.id}</td>
                   <td>
                     <Link to={`/item/edit/${item.id}`}>{item.name}</Link>

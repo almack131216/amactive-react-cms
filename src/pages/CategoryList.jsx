@@ -48,9 +48,9 @@ function CategoryList() {
             </tr>
           </thead>
           <tbody>
-            {categories.map((category, index) => {
+            {categories.map((category) => {
               return (
-                <tr key={index}>
+                <tr key={category.id}>
                   <td>{category.id}</td>
                   <td>
                     <Link to={`/c${category.id}/subcategory/list`}>

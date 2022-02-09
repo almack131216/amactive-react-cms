@@ -13,7 +13,9 @@ function SubcategoryList() {
   let breadcrumbArr = [BREADCRUMBS.CATEGORY_LIST]
   const params = useParams()
   const isMounted = useRef(true)
-  const [categoryId, setCategoryId] = useState(params.categoryId ? params.categoryId : null)
+  const [categoryId, setCategoryId] = useState(
+    params.categoryId ? params.categoryId : null
+  )
 
   const q = buildQuery({
     api: "subcategories",
@@ -58,14 +60,17 @@ function SubcategoryList() {
     console.log("deletedId: ", deletedId)
   }
 
-  if (subcategories.length) {
-    console.log("Subcategories loaded...", subcategories[0].categoryName)
-  }
-
   return (
     <Container>
-      <PageTitle title="Subcategories" addButton={{text: 'add subcategory', slug: `/c${categoryId}/subcategory/add`}} />
+      <PageTitle
+        title='Subcategories'
+        addButton={{
+          text: "add subcategory",
+          slug: `/c${categoryId}/subcategory/add`,
+        }}
+      />
 
+      {!subcategories.length && <p>No subcategories</p>}
       {subcategories.length > 0 && (
         <>
           <Table striped bordered hover>
@@ -77,9 +82,9 @@ function SubcategoryList() {
               </tr>
             </thead>
             <tbody>
-              {subcategories.map((subcategory, index) => {
+              {subcategories.map((subcategory) => {
                 return (
-                  <tr key={index}>
+                  <tr key={subcategory.id}>
                     <td>{subcategory.id}</td>
                     <td>
                       <Link
