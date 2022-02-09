@@ -2,7 +2,7 @@ import { useEffect, useState, useContext, useRef } from "react"
 import { Link, useParams } from "react-router-dom"
 import { Container, Table, Button } from "react-bootstrap"
 import { BREADCRUMBS, buildQuery } from "../context/CrudActions"
-import { useFetchCategories } from "../hooks/useFetch"
+import { useFetchCategoryList } from "../hooks/useFetchList"
 import CrudContext from "../context/CrudContext"
 import { useDeleteCategory } from "../hooks/useDelete"
 import PageTitle from "../components/PageTitle"
@@ -22,7 +22,7 @@ function SubcategoryList() {
     categoryId: categoryId,
   })
 
-  const { loading, error, subcategories } = useFetchCategories(q, {
+  const { loading, error, subcategories } = useFetchCategoryList(q, {
     type: "subcategory",
   })
 

@@ -2,8 +2,8 @@ import { useState, useEffect, useContext } from "react"
 import CrudContext from "../context/CrudContext"
 const axios = require("axios").default
 
-function useFetchCategories(url, options) {
-  console.log("[useFetch] useFetchCategories | url:", url)
+function useFetchCategoryList(url, options) {
+  console.log("[useFetch] useFetchCategoryList | url:", url)
   // 1 CONTEXT functions & props
   const {
     categories,
@@ -31,6 +31,7 @@ function useFetchCategories(url, options) {
             cxSetActiveCategory({
               id: data[0].categoryId,
               name: data[0].categoryName,
+              slug: data[0].categorySlug,
             })
             cxSetSubcategories(data)
           }
@@ -52,7 +53,7 @@ function useFetchCategories(url, options) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
-  // END return props
+  // RETURN props
   return { loading, error, categories, subcategories }
 }
 
@@ -94,4 +95,4 @@ function useFetchItems(url, options) {
   return { loading, error, items }
 }
 
-export { useFetchCategories, useFetchItems }
+export { useFetchCategoryList, useFetchItems }

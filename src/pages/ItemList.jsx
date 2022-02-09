@@ -1,7 +1,7 @@
 import { useEffect, useContext, useRef } from "react"
 import { Container, Table, Button } from "react-bootstrap"
 import { buildQuery, BREADCRUMBS } from "../context/CrudActions"
-import { useFetchItems } from "../hooks/useFetch"
+import { useFetchItems } from "../hooks/useFetchList"
 import { Link, useParams } from "react-router-dom"
 import CrudContext from "../context/CrudContext"
 import { useDeleteItem } from "../hooks/useDelete"

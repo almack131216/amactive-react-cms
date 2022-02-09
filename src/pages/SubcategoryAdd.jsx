@@ -10,8 +10,8 @@ function SubcategoryAdd() {
     useContext(CrudContext)
   const params = useParams()
   const [formData, setFormData] = useState({})
-  const [categoryId, setCategoryId] = useState(0)
-  
+  const [categoryId, setCategoryId] = useState(null)
+
   const { name, slug } = formData
 
   const { addForm, error, loading, isSubmitting } = useAddCategory()
@@ -19,13 +19,19 @@ function SubcategoryAdd() {
   // Fetch listing to edit
   useEffect(() => {
     let breadcrumbArr = [BREADCRUMBS.CATEGORY_LIST]
+    params.categoryId &&
+      breadcrumbArr.push({
+        type: "subcategory-list",
+        name: "Add subcategory",
+        slug: `/c${params.categoryId}/subcategory/list`,
+      })
     cxSetBreadcrumbs(breadcrumbArr)
 
-    setCategoryId(activeCategory.id ? activeCategory.id : params.categoryId)
-  console.log("categoryId: ", categoryId, activeCategory.id)
+    setCategoryId(params.categoryId)
+    console.log("categoryId: ", categoryId, params.categoryId)
   }, [])
 
-  if (!categoryId) return <h1>Category not set {activeCategory.id}</h1>
+  if (!categoryId) return <h1>Category not set {params.categoryId}</h1>
 
   if (error) {
     return <h3>Error: {error}</h3>

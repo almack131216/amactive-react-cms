@@ -1,19 +1,58 @@
 import { useEffect, useState, useContext } from "react"
 import { useParams } from "react-router-dom"
 import { BREADCRUMBS, buildQuery } from "../context/CrudActions"
+import { useFetchCategory } from "../hooks/useFetchSingle"
 import { Form, Button, Row, Col } from "react-bootstrap"
 import CrudContext from "../context/CrudContext"
 
 const axios = require("axios").default
 
 function CategoryEdit() {
-  const { cxSetActiveCategory, cxSetBreadcrumbs } = useContext(CrudContext)
-  const params = useParams()
-  const [loading, setLoading] = useState(false)
+  console.log("[P]--CategoryEdit")
+  // 1 CONTEXT
+  const { cxSetActiveCategory, cxSetBreadcrumbs, activeCategory } =
+    useContext(CrudContext)
   const [formData, setFormData] = useState({})
+  // FETCH
+  const params = useParams()
+  const q = buildQuery({
+    api: "categories",
+    id: params.categoryId ? params.categoryId : null,
+  })
+  console.log("Q: ", q)
+  const { loading, error, categoryObj } = useFetchCategory(q, {
+    type: "category",
+  })
+  const { id, name, slug } = categoryObj
+  // USEEFFECT
+  useEffect(() => {
+    let breadcrumbArr = [BREADCRUMBS.CATEGORY_LIST]
 
-  const { id, name, slug } = formData
+    if (activeCategory.id) {
+      breadcrumbArr.push({
+        type: "subcategory-list",
+        name: activeCategory.name,
+        slug: `/c${activeCategory.id}/subcategory/list`,
+      })
+      cxSetBreadcrumbs(breadcrumbArr)
+    }
 
+  }, [activeCategory])
+
+  // 2Do - form validations
+  const onChange = (e) => {
+    // console.log(e.target.value)
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value,
+    })
+  }
+
+  // RETURNED PROPS
+  if (error) return <h1>Error: {error}</h1>
+  if (loading) return <h1>Loading...</h1>
+
+  // 2Do - custom hook
   const updateForm = ({ id, name, slug }) => {
     const q = buildQuery({
       api: "update",
@@ -38,6 +77,11 @@ function CategoryEdit() {
         console.log(response)
         if (response.status === 200) {
           alert("Category update successfully.")
+          cxSetActiveCategory({
+            id: id,
+            name: formData.name,
+            slug: formData.slug,
+          })
         }
       })
       .catch(function (response) {
@@ -46,63 +90,7 @@ function CategoryEdit() {
       })
   }
 
-  // Fetch listing to edit
-  useEffect(() => {
-    setLoading(true)
-    let breadcrumbArr = [BREADCRUMBS.CATEGORY_LIST]
-
-    const fetchItem = async () => {
-      const q = buildQuery({
-        api: "categories",
-        id: params.categoryId ? params.categoryId : null,
-      })
-      console.log("[useEffect] Q: ", q)
-
-      try {
-        const response = await axios.get(q)
-        const data = response.data
-        console.log(data)
-
-        if (data.length) {
-          const dataLite = {
-            id: parseInt(data[0].id),
-            status: parseInt(data[0].status),
-            slug: data[0].slug,
-            name: data[0].name,
-          }
-          console.log(dataLite)
-          setFormData(dataLite)
-
-          breadcrumbArr.push({
-            active: true,
-            slug: `/category/edit/${parseInt(data[0].id)}`,
-            name: `EDIT: ${data[0].name}`,
-          })
-          cxSetBreadcrumbs(breadcrumbArr)
-          cxSetActiveCategory(dataLite)
-          setLoading(false)
-        }
-      } catch (error) {
-        setLoading(false)
-        console.error(error)
-      }
-    }
-
-    fetchItem()
-  }, [params.categoryId])
-
-  if (loading) {
-    return <h3>Loading...</h3>
-  }
-
-  const onChange = (e) => {
-    // console.log(e.target.value)
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value,
-    })
-  }
-
+  // XML
   return (
     <>
       <h1>EDIT category: {id}</h1>

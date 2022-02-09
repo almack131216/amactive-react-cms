@@ -3,17 +3,64 @@ import { useParams } from "react-router-dom"
 import { BREADCRUMBS, buildQuery } from "../context/CrudActions"
 import { Form, Button, Row, Col } from "react-bootstrap"
 import CrudContext from "../context/CrudContext"
+import { useFetchCategory } from "../hooks/useFetchSingle"
 const axios = require("axios").default
 
 function SubcategoryEdit() {
-  const { cxSetBreadcrumbs } = useContext(CrudContext)
-  const params = useParams()
-  const [loading, setLoading] = useState(false)
+  console.log("[P]--SubcategoryEdit")
+  // 1 CONTEXT
+  const {
+    cxSetBreadcrumbs,
+    activeCategory,
+    activeSubcategory,
+    cxSetActiveSubcategory,
+  } = useContext(CrudContext)
   const [formData, setFormData] = useState({})
-  const [subcategoryName, setSubcategoryName] = useState("")
+  // FETCH
+  const params = useParams()
+  const q = buildQuery({
+    api: "subcategories",
+    id: params.subcategoryId ? params.subcategoryId : null,
+  })
+  console.log("Q: ", q)
+  const { loading, error, categoryObj } = useFetchCategory(q, {
+    type: "subcategory",
+  })
+  const { id, name, slug } = categoryObj
+  // USEEFFECT
+  useEffect(() => {
+    let breadcrumbArr = [BREADCRUMBS.CATEGORY_LIST]
 
-  const { id, name, slug } = formData
+    if (activeCategory.id) {
+      breadcrumbArr.push({
+        type: "category-list",
+        name: activeCategory.name,
+        slug: `/c${activeCategory.id}/subcategory/list`,
+      })
+    }
+    if (activeSubcategory.id) {
+      breadcrumbArr.push({
+        type: "category-list",
+        name: activeSubcategory.name,
+        slug: `/c${activeCategory.id}/subcategory/edit/sc${activeSubcategory.id}`,
+      })
+    }
+    cxSetBreadcrumbs(breadcrumbArr)
+  }, [activeCategory, activeSubcategory])
 
+  // RETURNED PROPS
+  if (error) return <h1>Error: {error}</h1>
+  if (loading) return <h1>Loading...</h1>
+
+  // 2Do - form validations
+  const onChange = (e) => {
+    // console.log(e.target.value)
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value,
+    })
+  }
+  // 2Do - custom hook
   const updateForm = ({ id, name, slug }) => {
     const q = buildQuery({
       api: "update",
@@ -22,7 +69,6 @@ function SubcategoryEdit() {
     })
     console.log("[POST] Q: ", q)
     console.log("name: ", formData.name)
-    setSubcategoryName(formData.name)
 
     let formDataNew = new FormData()
     formDataNew.append("id", id)
@@ -39,6 +85,11 @@ function SubcategoryEdit() {
         console.log(response)
         if (response.status === 200) {
           alert("Subcategory update successfully.")
+          cxSetActiveSubcategory({
+            id,
+            name: formData.name,
+            slug: formData.slug,
+          })
         }
       })
       .catch(function (response) {
@@ -47,73 +98,10 @@ function SubcategoryEdit() {
       })
   }
 
-  // Fetch listing to edit
-  useEffect(() => {
-    setLoading(true)
-    let breadcrumbArr = [BREADCRUMBS.CATEGORY_LIST]
-
-    const fetchItem = async () => {
-      const q = buildQuery({
-        api: "subcategories",
-        id: params.subcategoryId ? params.subcategoryId : null,
-      })
-      console.log("[useEffect] Q: ", q)
-
-      try {
-        const response = await axios.get(q)
-        const data = response.data
-        console.log(data)
-
-        if (data.length) {
-          const dataLite = {
-            id: parseInt(data[0].id),
-            status: parseInt(data[0].status),
-            slug: data[0].slug,
-            name: data[0].name,
-          }
-          console.log(dataLite)
-          setFormData(dataLite)
-          setSubcategoryName(data[0].name)
-
-          breadcrumbArr.push({
-            slug: `/c${parseInt(data[0].categoryId)}/subcategory/list`,
-            name: `${data[0].categoryName}`,
-          })
-
-          breadcrumbArr.push({
-            slug: `/c${parseInt(
-              data[0].categoryId
-            )}/subcategory/edit/${parseInt(data[0].id)}`,
-            name: `EDIT: ${subcategoryName}`,
-          })
-          cxSetBreadcrumbs(breadcrumbArr)
-
-          setLoading(false)
-        }
-      } catch (error) {
-        setLoading(false)
-        console.error(error)
-      }
-    }
-
-    fetchItem()
-  }, [params.subcategoryId, subcategoryName])
-
-  if (loading) {
-    return <h3>Loading...</h3>
-  }
-
-  const onChange = (e) => {
-    // console.log(e.target.value)
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value,
-    })
-  }
-
+  // XML
   return (
     <>
-      <h1>EDIT subcategory: {subcategoryName}</h1>
+      <h1>EDIT subcategory: {name}</h1>
 
       <Form>
         <Form.Group as={Row} className='mb-3'>
