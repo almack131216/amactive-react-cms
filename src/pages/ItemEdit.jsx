@@ -4,78 +4,93 @@ import { useCrumb } from "../hooks/useCrumb"
 import { buildQuery } from "../context/CrudActions"
 import { Container, Form, Button, Row, Col } from "react-bootstrap"
 import CrudContext from "../context/CrudContext"
+import { useFetchItem } from "../hooks/useFetchSingle"
 
 const axios = require("axios").default
 
 function ItemEdit() {
-  console.log('P]--ItemEdit');
-  const { cxSetBreadcrumbs } = useContext(CrudContext)
+  console.log("P]--ItemEdit")
+  // CONTEXT
+  const { activeSubcategory, cxSetBreadcrumbs } = useContext(CrudContext)
   const params = useParams()
-  const { breadcrumbArr } = useCrumb({
-    page: "item-edit",
-    categoryId: params.categoryId,
-    subcategoryId: params.subcategoryId,
-  })
-
-  const [loading, setLoading] = useState(false)
 
   const [formData, setFormData] = useState({})
-
-  const { id, name, slug, images, categoryId, subcategoryId, description } =
-    formData
-
+  const [canSubmit, setCanSubmit] = useState(false)
   // Fetch listing to edit
+  const q = buildQuery({
+    api: "items",
+    id: params.itemId,
+  })
+  console.log("Q: ", q)
+  const { loading, error, itemObj } = useFetchItem(q, {
+    type: "item",
+  })
+  const {
+    id,
+    name,
+    slug,
+    description,
+    categoryId,
+    categoryName,
+    subcategoryId,
+    subcategoryName,
+  } = itemObj
+
+  const { breadcrumbArr } = useCrumb({
+    page: "item-edit",
+    categoryId: categoryId,
+    subcategoryId: subcategoryId,
+  })
+
   useEffect(() => {
-    setLoading(true)
+    cxSetBreadcrumbs(breadcrumbArr)
+  }, [activeSubcategory])
 
-    const fetchItem = async () => {
-      const q = buildQuery({
-        api: "items",
-        id: params.itemId,
-      })
-      console.log("Q: ", q)
+  const onMutate = (e) => {
+    console.log(e.target.value)
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value,
+    })
+    console.log("readyToSubmit:", canSubmit, itemObj)
+    setCanSubmit(itemObj[e.target.name] !== e.target.value ? true : false)
+  }
 
-      try {
-        const response = await axios.get(q)
-        const data = response.data
-        console.log(data)
+  // 2Do - custom hook
+  const updateForm = ({ id, name, slug }) => {
+    const q = buildQuery({
+      api: "update",
+      type: "item",
+      id,
+    })
+    console.log("[POST] Q: ", q)
+    console.log("name: ", formData.FormDataname)
 
-        if (data.length) {
-          const dataLite = {
-            id: parseInt(data[0].id),
-            status: parseInt(data[0].status),
-            slug: data[0].slug,
-            name: data[0].name,
-            categoryId: parseInt(data[0].category),
-            subcategoryId: parseInt(data[0].subcategoryId),
-            description: data[0].description,
-            images: [],
-          }
-          console.log(dataLite)
+    let formDataNew = new FormData()
+    formDataNew.append("id", id)
+    formData.name && formDataNew.append("name", formData.name)
+    formData.slug && formDataNew.append("slug", formData.slug)
+    formData.description &&
+      formDataNew.append("description", formData.description)
+    formDataNew.append("type", "item")
 
-          breadcrumbArr.push({
-            type: "subcategory-active",
-            name: data[0].subcategoryName,
-            slug: `/c${data[0].categoryId}/sc${data[0].subcategoryId}/item/list`,
-          })
-          breadcrumbArr.push({
-            type: "item-edit",
-            name: `EDIT: ${data[0].name}`,
-            slug: `/item/edit/c${data[0].id}`,
-          })
-          cxSetBreadcrumbs(breadcrumbArr)
+    console.log("formData: ", formDataNew, name)
 
-          setFormData(dataLite)
-          setLoading(false)
+    axios
+      .post(q, formDataNew)
+      .then(function (response) {
+        //handle success
+        console.log(response)
+        if (response.status === 200) {
+          alert("Item update successfully.")
+          // 2Do - update item name on page
         }
-      } catch (error) {
-        setLoading(false)
-        console.error(error)
-      }
-    }
-
-    fetchItem()
-  }, [])
+      })
+      .catch(function (response) {
+        //handle error
+        console.log(response)
+      })
+  }
 
   if (loading) {
     return <h3>Loading...</h3>
@@ -91,15 +106,25 @@ function ItemEdit() {
             Name
           </Form.Label>
           <Col sm='10'>
-            <Form.Control plaintext defaultValue={name} />
+            <Form.Control
+              plaintext
+              name='name'
+              defaultValue={name}
+              onChange={onMutate}
+            />
           </Col>
         </Form.Group>
         <Form.Group as={Row} className='mb-3'>
           <Form.Label column sm='2'>
-            subcategory
+            slug
           </Form.Label>
           <Col sm='10'>
-            <Form.Control plaintext defaultValue={subcategoryId} />
+            <Form.Control
+              plaintext
+              name='slug'
+              defaultValue={slug}
+              onChange={onMutate}
+            />
           </Col>
         </Form.Group>
         <Form.Group as={Row} className='mb-3'>
@@ -110,6 +135,13 @@ function ItemEdit() {
             <Form.Control as='textarea' rows={3} defaultValue={description} />
           </Col>
         </Form.Group>
+        <Button
+          type='submit'
+          onClick={() => updateForm({ id, name, slug })}
+          disabled={!canSubmit}
+        >
+          update
+        </Button>
       </Form>
     </>
   )
