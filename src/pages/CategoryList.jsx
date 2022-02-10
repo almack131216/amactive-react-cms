@@ -2,7 +2,8 @@ import { useEffect, useContext } from "react"
 import { Link } from "react-router-dom"
 import { Table, Button } from "react-bootstrap"
 import CrudContext from "../context/CrudContext"
-import { BREADCRUMBS, buildQuery } from "../context/CrudActions"
+import { buildQuery } from "../context/CrudActions"
+import { useCrumb } from "../hooks/useCrumb"
 import { useFetchCategoryList } from "../hooks/useFetchList"
 import { useDeleteCategory } from "../hooks/useDelete"
 import PageTitle from "../components/PageTitle"
@@ -11,6 +12,7 @@ function CategoryList() {
   console.log("[P]--CategoryList")
   // 1 CONTEXT functions & props
   const { cxSetBreadcrumbs } = useContext(CrudContext)
+  const {breadcrumbArr} = useCrumb({page:'category-list'})
   // 2 FETCH list
   const q = buildQuery({api: "categories"})
   console.log("Q: ", q)
@@ -19,7 +21,6 @@ function CategoryList() {
   const { deleteCategory, deletedId } = useDeleteCategory()
   // 4 USEEFFECT
   useEffect(() => {
-    let breadcrumbArr = [BREADCRUMBS.CATEGORY_LIST]
     cxSetBreadcrumbs(breadcrumbArr)
   }, [])
   

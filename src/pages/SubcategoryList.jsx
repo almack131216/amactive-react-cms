@@ -1,7 +1,8 @@
 import { useEffect, useState, useContext, useRef } from "react"
 import { Link, useParams } from "react-router-dom"
 import { Container, Table, Button } from "react-bootstrap"
-import { BREADCRUMBS, buildQuery } from "../context/CrudActions"
+import { buildQuery } from "../context/CrudActions"
+import { useCrumb } from "../hooks/useCrumb"
 import { useFetchCategoryList } from "../hooks/useFetchList"
 import CrudContext from "../context/CrudContext"
 import { useDeleteCategory } from "../hooks/useDelete"
@@ -10,8 +11,8 @@ import PageTitle from "../components/PageTitle"
 function SubcategoryList() {
   console.log("[P]--SubcategoryList")
   const { cxSetBreadcrumbs } = useContext(CrudContext)
-  let breadcrumbArr = [BREADCRUMBS.CATEGORY_LIST]
   const params = useParams()
+  const {breadcrumbArr} = useCrumb({page:'subcategory-list', categoryId: params.categoryId})
   const isMounted = useRef(true)
   const [categoryId, setCategoryId] = useState(
     params.categoryId ? params.categoryId : null
@@ -29,24 +30,11 @@ function SubcategoryList() {
   const { deleteCategory, deletedId } = useDeleteCategory()
 
   useEffect(() => {
-    if (!subcategories.length) return
-    if (isMounted) {
-      breadcrumbArr.push({
-        type: "subcategory-list",
-        name: subcategories[0].categoryName,
-        slug: `/c${subcategories[0].categoryId}/subcategory/list`,
-      })
 
-      if (breadcrumbArr.length) {
         console.log("LOAD BREADCRUMBS...", breadcrumbArr)
         cxSetBreadcrumbs(breadcrumbArr)
-      }
-    }
 
-    return () => {
-      isMounted.current = false
-    }
-  }, [isMounted, subcategories])
+  }, [subcategories])
 
   if (error) {
     return <h1>Error: {error}</h1>

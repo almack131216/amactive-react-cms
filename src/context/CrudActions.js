@@ -1,20 +1,5 @@
-const BREADCRUMBS = {
-  CATEGORY_LIST: {
-    type: "category-list",
-    name: "Categories",
-    slug: `/category/list`,
-  },
-  SUBCATEGORY_LIST: {
-    type: "category-list",
-    name: "Categories",
-    slug: `/category/list`,
-  },
-  ITEM_LIST: {
-    type: "item-list",
-    name: "Items",
-    slug: `/item/list`,
-  },
-}
+import { useContext } from "react"
+import CrudContext from "./CrudContext"
 
 const buildQuery = ({
   api,
@@ -41,4 +26,4 @@ const buildQuery = ({
   return q
 }
 
-export { buildQuery, BREADCRUMBS }
+export { buildQuery }

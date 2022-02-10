@@ -1,6 +1,7 @@
 import { useEffect, useState, useContext } from "react"
 import { useParams } from "react-router-dom"
-import { BREADCRUMBS, buildQuery } from "../context/CrudActions"
+import { useCrumb } from "../hooks/useCrumb"
+import { buildQuery } from "../context/CrudActions"
 import { Form, Button, Row, Col } from "react-bootstrap"
 import CrudContext from "../context/CrudContext"
 import { useFetchCategory } from "../hooks/useFetchSingle"
@@ -10,14 +11,19 @@ function SubcategoryEdit() {
   console.log("[P]--SubcategoryEdit")
   // 1 CONTEXT
   const {
-    cxSetBreadcrumbs,
     activeCategory,
     activeSubcategory,
+    cxSetBreadcrumbs,
     cxSetActiveSubcategory,
   } = useContext(CrudContext)
+  const params = useParams()
+  const { breadcrumbArr } = useCrumb({
+    page: "subcategory-edit",
+    categoryId: params.categoryId,
+    subcategoryId: params.subcategoryId,
+  })
   const [formData, setFormData] = useState({})
   // FETCH
-  const params = useParams()
   const q = buildQuery({
     api: "subcategories",
     id: params.subcategoryId ? params.subcategoryId : null,
@@ -29,25 +35,8 @@ function SubcategoryEdit() {
   const { id, name, slug } = categoryObj
   // USEEFFECT
   useEffect(() => {
-    let breadcrumbArr = [BREADCRUMBS.CATEGORY_LIST]
-
-    if (activeCategory.id) {
-      breadcrumbArr.push({
-        type: "category-list",
-        name: activeCategory.name,
-        slug: `/c${activeCategory.id}/subcategory/list`,
-      })
-    }
-    if (activeSubcategory.id) {
-      breadcrumbArr.push({
-        type: "category-list",
-        name: activeSubcategory.name,
-        slug: `/c${activeCategory.id}/subcategory/edit/sc${activeSubcategory.id}`,
-      })
-    }
     cxSetBreadcrumbs(breadcrumbArr)
   }, [activeCategory, activeSubcategory])
-
   // RETURNED PROPS
   if (error) return <h1>Error: {error}</h1>
   if (loading) return <h1>Loading...</h1>

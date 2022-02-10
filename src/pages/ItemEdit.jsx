@@ -1,14 +1,22 @@
 import { useEffect, useState, useContext } from "react"
 import { useParams } from "react-router-dom"
-import { BREADCRUMBS, buildQuery } from "../context/CrudActions"
+import { useCrumb } from "../hooks/useCrumb"
+import { buildQuery } from "../context/CrudActions"
 import { Container, Form, Button, Row, Col } from "react-bootstrap"
 import CrudContext from "../context/CrudContext"
 
 const axios = require("axios").default
 
 function ItemEdit() {
+  console.log('P]--ItemEdit');
   const { cxSetBreadcrumbs } = useContext(CrudContext)
   const params = useParams()
+  const { breadcrumbArr } = useCrumb({
+    page: "item-edit",
+    categoryId: params.categoryId,
+    subcategoryId: params.subcategoryId,
+  })
+
   const [loading, setLoading] = useState(false)
 
   const [formData, setFormData] = useState({})
@@ -19,7 +27,6 @@ function ItemEdit() {
   // Fetch listing to edit
   useEffect(() => {
     setLoading(true)
-    let breadcrumbArr = [BREADCRUMBS.CATEGORY_LIST]
 
     const fetchItem = async () => {
       const q = buildQuery({
@@ -40,7 +47,7 @@ function ItemEdit() {
             slug: data[0].slug,
             name: data[0].name,
             categoryId: parseInt(data[0].category),
-            subcategoryId: parseInt(data[0].sc_id),
+            subcategoryId: parseInt(data[0].subcategoryId),
             description: data[0].description,
             images: [],
           }
@@ -48,8 +55,8 @@ function ItemEdit() {
 
           breadcrumbArr.push({
             type: "subcategory-active",
-            name: data[0].sc_name,
-            slug: `/c${data[0].categoryId}/sc${data[0].sc_id}/item/list`,
+            name: data[0].subcategoryName,
+            slug: `/c${data[0].categoryId}/sc${data[0].subcategoryId}/item/list`,
           })
           breadcrumbArr.push({
             type: "item-edit",

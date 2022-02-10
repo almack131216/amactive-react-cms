@@ -11,6 +11,7 @@ function useFetchCategoryList(url, options) {
     cxSetActiveCategory,
     subcategories,
     cxSetSubcategories,
+    cxSetActiveSubcategory
   } = useContext(CrudContext)
   // 2 STATES
   const [loading, setLoading] = useState(false)
@@ -32,6 +33,11 @@ function useFetchCategoryList(url, options) {
               id: data[0].categoryId,
               name: data[0].categoryName,
               slug: data[0].categorySlug,
+            })
+            cxSetActiveSubcategory({
+              id: data[0].id,
+              name: data[0].name,
+              slug: data[0].slug,
             })
             cxSetSubcategories(data)
           }
@@ -71,9 +77,15 @@ function useFetchItems(url, options) {
         console.log("data:", data)
 
         if (data.length) {
+          cxSetActiveCategory({
+            id: data[0].categoryId,
+            name: data[0].categoryName,
+            slug: data[0].categorySlug,
+          })
           cxSetActiveSubcategory({
             id: data[0].subcategoryId,
             name: data[0].subcategoryName,
+            slug: data[0].subcategorySlug,
           })
           cxSetItems(data)
         } else {

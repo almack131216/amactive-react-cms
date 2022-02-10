@@ -1,6 +1,7 @@
 import { useEffect, useState, useContext } from "react"
 import { useParams } from "react-router-dom"
-import { BREADCRUMBS, buildQuery } from "../context/CrudActions"
+import { useCrumb } from "../hooks/useCrumb"
+import { buildQuery } from "../context/CrudActions"
 import { useFetchCategory } from "../hooks/useFetchSingle"
 import { Form, Button, Row, Col } from "react-bootstrap"
 import CrudContext from "../context/CrudContext"
@@ -12,9 +13,13 @@ function CategoryEdit() {
   // 1 CONTEXT
   const { cxSetActiveCategory, cxSetBreadcrumbs, activeCategory } =
     useContext(CrudContext)
+  const params = useParams()
+  const { breadcrumbArr } = useCrumb({
+    page: "category-edit",
+    categoryId: params.categoryId,
+  })
   const [formData, setFormData] = useState({})
   // FETCH
-  const params = useParams()
   const q = buildQuery({
     api: "categories",
     id: params.categoryId ? params.categoryId : null,
@@ -26,18 +31,8 @@ function CategoryEdit() {
   const { id, name, slug } = categoryObj
   // USEEFFECT
   useEffect(() => {
-    let breadcrumbArr = [BREADCRUMBS.CATEGORY_LIST]
-
-    if (activeCategory.id) {
-      breadcrumbArr.push({
-        type: "subcategory-list",
-        name: activeCategory.name,
-        slug: `/c${activeCategory.id}/subcategory/list`,
-      })
-      cxSetBreadcrumbs(breadcrumbArr)
-    }
-
-  }, [activeCategory])
+    cxSetBreadcrumbs(breadcrumbArr)
+  }, [])
 
   // 2Do - form validations
   const onChange = (e) => {

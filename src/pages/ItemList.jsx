@@ -1,6 +1,7 @@
-import { useEffect, useContext, useRef } from "react"
+import { useEffect, useContext } from "react"
 import { Container, Table, Button } from "react-bootstrap"
-import { buildQuery, BREADCRUMBS } from "../context/CrudActions"
+import { buildQuery } from "../context/CrudActions"
+import { useCrumb } from "../hooks/useCrumb"
 import { useFetchItems } from "../hooks/useFetchList"
 import { Link, useParams } from "react-router-dom"
 import CrudContext from "../context/CrudContext"
@@ -8,11 +9,13 @@ import { useDeleteItem } from "../hooks/useDelete"
 
 function ItemList() {
   console.log("[P]--ItemList")
-  const { cxSetBreadcrumbs, activeCategory, activeSubcategory } = useContext(CrudContext)
-  let breadcrumbArr = [BREADCRUMBS.CATEGORY_LIST]
-  // eslint-disable-next-line
+  const { cxSetBreadcrumbs } = useContext(CrudContext)
   const params = useParams()
-  const isMounted = useRef(true)
+  const { breadcrumbArr } = useCrumb({
+    page: "item-list",
+    categoryId: params.categoryId,
+    subcategoryId: params.subcategoryId,
+  })
 
   const q = buildQuery({
     api: "items",
@@ -27,31 +30,8 @@ function ItemList() {
   const { deleteItem, deletedId } = useDeleteItem()
 
   useEffect(() => {
-    if (!items.length) return
-    if (isMounted) {
-      params.categoryId &&
-        breadcrumbArr.push({
-          type: "category-active",
-          name: activeCategory.name ? activeCategory.name : `c${params.categoryId}`,
-          slug: `/c${activeCategory.id ? activeCategory.id : params.categoryId}/subcategory/list`,
-        })
-      params.subcategoryId &&
-        breadcrumbArr.push({
-          type: "subcategory-active",
-          name: activeSubcategory.name ? activeSubcategory.name : `sc${params.subcategoryId}`,
-          slug: `/c${activeSubcategory.id ? activeSubcategory.id : params.subcategoryId}/subcategory/list`,
-        })
-
-      if (breadcrumbArr.length) {
-        console.log("LOAD BREADCRUMBS...", breadcrumbArr)
-        cxSetBreadcrumbs(breadcrumbArr)
-      }
-    }
-
-    return () => {
-      isMounted.current = false
-    }
-  }, [isMounted, items])
+    cxSetBreadcrumbs(breadcrumbArr)
+  }, [items])
 
   if (error) {
     return <h1>Error: {error}</h1>
