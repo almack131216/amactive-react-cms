@@ -32,7 +32,7 @@ function CategoryEdit() {
   // USEEFFECT
   useEffect(() => {
     cxSetBreadcrumbs(breadcrumbArr)
-  }, [])
+  }, [activeCategory])
 
   // 2Do - form validations
   const onChange = (e) => {
@@ -59,8 +59,8 @@ function CategoryEdit() {
 
     let formDataNew = new FormData()
     formDataNew.append("id", id)
-    formDataNew.append("name", formData.name)
-    formDataNew.append("slug", formData.slug)
+    formData.name && formDataNew.append("name", formData.name)
+    formData.slug && formDataNew.append("slug", formData.slug)
     formDataNew.append("type", "category")
 
     console.log("formData: ", formDataNew, name)
@@ -88,7 +88,7 @@ function CategoryEdit() {
   // XML
   return (
     <>
-      <h1>EDIT category: {id}</h1>
+      <h1>EDIT category</h1>
 
       <Form>
         <Form.Group as={Row} className='mb-3'>

@@ -6,13 +6,13 @@ import CrudContext from "../context/CrudContext"
 import { useAddCategory } from "../hooks/useAdd"
 
 function CategoryAdd() {
-  const { cxSetActiveCategory, cxSetBreadcrumbs } = useContext(CrudContext)
+  // 1 CONTEXT & props
+  const { cxSetBreadcrumbs } = useContext(CrudContext)
   const [formData, setFormData] = useState({})
   const { name, slug } = formData
   const params = useParams()
   const { breadcrumbArr } = useCrumb({
-    page: "category-edit",
-    categoryId: params.categoryId,
+    page: "category-add",
   })
   const { addForm, error, loading, isSubmitting } = useAddCategory()
 

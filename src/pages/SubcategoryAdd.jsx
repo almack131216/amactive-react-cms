@@ -1,6 +1,6 @@
 import { useEffect, useState, useContext } from "react"
 import { useParams } from "react-router-dom"
-import { BREADCRUMBS } from "../context/CrudActions"
+import { useCrumb } from "../hooks/useCrumb"
 import { Form, Button, Row, Col } from "react-bootstrap"
 import CrudContext from "../context/CrudContext"
 import { useAddCategory } from "../hooks/useAdd"
@@ -9,6 +9,10 @@ function SubcategoryAdd() {
   const { cxSetActiveCategory, cxSetBreadcrumbs, activeCategory } =
     useContext(CrudContext)
   const params = useParams()
+  const { breadcrumbArr } = useCrumb({
+    page: "subcategory-add",
+    categoryId: params.categoryId,
+  })
   const [formData, setFormData] = useState({})
   const [categoryId, setCategoryId] = useState(null)
 
@@ -18,15 +22,7 @@ function SubcategoryAdd() {
 
   // Fetch listing to edit
   useEffect(() => {
-    let breadcrumbArr = [BREADCRUMBS.CATEGORY_LIST]
-    params.categoryId &&
-      breadcrumbArr.push({
-        type: "subcategory-list",
-        name: "Add subcategory",
-        slug: `/c${params.categoryId}/subcategory/list`,
-      })
     cxSetBreadcrumbs(breadcrumbArr)
-
     setCategoryId(params.categoryId)
     console.log("categoryId: ", categoryId, params.categoryId)
   }, [])

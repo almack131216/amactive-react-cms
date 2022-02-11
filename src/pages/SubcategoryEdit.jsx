@@ -23,6 +23,7 @@ function SubcategoryEdit() {
     subcategoryId: params.subcategoryId,
   })
   const [formData, setFormData] = useState({})
+  const [canSubmit, setCanSubmit] = useState(false)
   // FETCH
   const q = buildQuery({
     api: "subcategories",
@@ -36,18 +37,20 @@ function SubcategoryEdit() {
   // USEEFFECT
   useEffect(() => {
     cxSetBreadcrumbs(breadcrumbArr)
-  }, [activeCategory, activeSubcategory])
+  }, [activeSubcategory])
   // RETURNED PROPS
   if (error) return <h1>Error: {error}</h1>
   if (loading) return <h1>Loading...</h1>
 
   // 2Do - form validations
   const onChange = (e) => {
-    // console.log(e.target.value)
+    console.log(e.target.value)
     setFormData({
       ...formData,
       [e.target.name]: e.target.value,
     })
+    console.log("readyToSubmit:", canSubmit, categoryObj)
+    setCanSubmit(categoryObj[e.target.name] !== e.target.value ? true : false)
   }
   // 2Do - custom hook
   const updateForm = ({ id, name, slug }) => {
@@ -61,8 +64,8 @@ function SubcategoryEdit() {
 
     let formDataNew = new FormData()
     formDataNew.append("id", id)
-    formDataNew.append("name", formData.name)
-    formDataNew.append("slug", formData.slug)
+    formData.name && formDataNew.append("name", formData.name)
+    formData.slug && formDataNew.append("slug", formData.slug)
     formDataNew.append("type", "subcategory")
 
     console.log("formData: ", formDataNew, name)
@@ -90,7 +93,7 @@ function SubcategoryEdit() {
   // XML
   return (
     <>
-      <h1>EDIT subcategory: {name}</h1>
+      <h1>EDIT subcategory: {formData.name}</h1>
 
       <Form>
         <Form.Group as={Row} className='mb-3'>
@@ -122,7 +125,11 @@ function SubcategoryEdit() {
         </Form.Group>
       </Form>
 
-      <Button type='submit' onClick={() => updateForm({ id, name, slug })}>
+      <Button
+        type='submit'
+        onClick={() => updateForm({ id, name, slug })}
+        disabled={!canSubmit}
+      >
         update
       </Button>
     </>
