@@ -23,14 +23,14 @@ const SHARED_PROPS = ({ type, categoryId }) => {
 
 function useAddCategory() {
   const [loading, setLoading] = useState(false)
-  const [isSubmitting, setIsSubmitting] = useState(false)
   const [error, setError] = useState(null)
+  const [addFormStatus, setAddFormStatus] = useState(null)
   const navigate = useNavigate()
 
   //   const { id, name, slug } = formData
   const addForm = ({ name, slug, type, categoryId }) => {
+    setLoading(true)
     const props = SHARED_PROPS({ type, categoryId })
-    setIsSubmitting(true)
     const q = buildQuery({
       api: "insert",
       type: type,
@@ -56,27 +56,27 @@ function useAddCategory() {
             //handle success
             console.log(response)
             if (response.status === 200) {
+              setAddFormStatus(true)
               alert(`${props.success} added successfully.`)
             }
-            setIsSubmitting(false)
             navigate(props.navigate)
           })
           .catch(function (response) {
             //handle error
             console.log(response)
-            setIsSubmitting(false)
+            setAddFormStatus(false)
           })
       } catch (error) {
         console.log("Error: ", error)
-        setError(error)
-        setLoading(false)
+        setError(error)        
         console.error(error)
       }
+      setLoading(false)
     }
     insertData()
   }
 
-  return { addForm, error, loading, isSubmitting }
+  return { addForm, error, loading, addFormStatus }
 }
 
 export { useAddCategory }

@@ -1,85 +1,95 @@
 import { useEffect, useState, useContext } from "react"
-import { useParams } from "react-router-dom"
 import { useCrumb } from "../hooks/useCrumb"
-import { Form, Button, Row, Col } from "react-bootstrap"
 import CrudContext from "../context/CrudContext"
 import { useAddCategory } from "../hooks/useAdd"
+import useForm from "../hooks/useFormDynamic"
+import { FormContext } from "../context/FormContext"
+import Element from "../components/forms/elements/Element"
+import BtnSubmit from "../components/forms/elements/BtnSubmit"
+import formJSON from "../components/forms/data/formAddCategory.json"
 
 function CategoryAdd() {
   // 1 CONTEXT & props
   const { cxSetBreadcrumbs } = useContext(CrudContext)
-  const [formData, setFormData] = useState({})
-  const { name, slug } = formData
-  const params = useParams()
   const { breadcrumbArr } = useCrumb({
     page: "category-add",
   })
-  const { addForm, error, loading, isSubmitting } = useAddCategory()
+  const { addForm, error, loading, addFormStatus } = useAddCategory()
+  const { handleChange, handleSlug, elements, values, errors, handleSubmit, setElements } =
+    useForm(addCategory)
 
-  // Fetch listing to edit
+  // SET form field elements
   useEffect(() => {
     cxSetBreadcrumbs(breadcrumbArr)
+    setElements(formJSON[0])
   }, [])
 
+  // SET field values to be empty when category is added
+  useEffect(() => {
+    if (addFormStatus) {
+      console.log("------------RESET")
+      fields.forEach((field) => {
+        field.value = ""
+      })
+    }
+  }, [addFormStatus])
+  const { fields, page_title, btnSubmit } = elements ?? {}
+
+  // Submitting...
+  // If form data was added successfully...
+  // clear field values
+  function addCategory() {
+    console.log("addCategory: ", elements)
+    console.log("addCategory: values = ", values)
+    if (values.length === 0) return
+    const { name, slug } = values
+    console.log("addCategory: adding... name: " + name + ", slug: ", slug)
+    addForm({ name, slug, type: "category" })
+  }
+
+  if (addFormStatus) {
+    console.log("------------RESET")
+    fields.forEach((field) => {
+      field.value = ""
+    })
+  }
+
   if (error) {
-    return <h3>Error: {error}</h3>
+    return <h3>There was an error</h3>
   }
 
   if (loading) {
     return <h3>Loading...</h3>
   }
-
-  const onChange = (e) => {
-    // console.log(e.target.value)
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value,
-    })
-  }
+  // (END) Submitting
 
   return (
     <>
-      <h1>ADD category</h1>
-
-      <Form>
-        <Form.Group as={Row} className='mb-3'>
-          <Form.Label column sm='2'>
-            Name
-          </Form.Label>
-          <Col sm='10'>
-            <Form.Control
-              plaintext
-              placeholder='Category Name'
-              name='name'
-              onChange={(e) => onChange(e)}
-              value={name || ""}
-            />
-          </Col>
-        </Form.Group>
-
-        <Form.Group as={Row} className='mb-3'>
-          <Form.Label column sm='2'>
-            Slug
-          </Form.Label>
-          <Col sm='10'>
-            <Form.Control
-              plaintext
-              placeholder='category-slug'
-              name='slug'
-              onChange={(e) => onChange(e)}
-              value={slug || ""}
-            />
-          </Col>
-        </Form.Group>
-      </Form>
-
-      <Button
-        type='submit'
-        onClick={() => addForm({ name, slug, type: 'category' })}
-        disabled={isSubmitting}
+      <FormContext.Provider
+        value={{
+          handleChange,
+          handleSlug,
+          handleSubmit,
+          values,
+          loading,
+          errors,
+          fields,
+        }}
       >
-        add
-      </Button>
+        <div className='container'>
+          <h3>{page_title}</h3>
+          <form>
+            {/* Dynamic Fields */}
+            {fields
+              ? fields.map((field, i) => (
+                  <Element key={i} field={field} error={errors[field.name]} />
+                ))
+              : null}
+            {/* Submit Button */}
+            {btnSubmit && <BtnSubmit props={btnSubmit} />}
+          </form>
+        </div>
+      </FormContext.Provider>
     </>
   )
 }
