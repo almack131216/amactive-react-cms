@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react"
 import useSlugify from "./useSlugify"
+import useValidation from "./useValidation"
 // import formJSON from "../components/forms/data/formAddCategory.json"
 
 export const useForm = (callback) => {
@@ -10,7 +11,9 @@ export const useForm = (callback) => {
   // Errors
   const [errors, setErrors] = useState({})
   // Slug
-  const {slugMe} = useSlugify()
+  const { slugMe } = useSlugify()
+  // Validate
+  const { returnValidationError } = useValidation()
 
   useEffect(() => {
     // setElements(formJSON[0])
@@ -24,63 +27,17 @@ export const useForm = (callback) => {
 
   const validate = (name, value) => {
     console.log("validate: ", name, value)
-    // validate each input value
-    switch (name) {
-      case "name":
-        if (value.replace(/\s/g, "").length < 4) {
-          // set error
-          setErrors({
-            ...errors,
-            name: "Name must be at least 4 characters",
-          })
-        } else {
-          // remove error from input
-          removeError("name")
-        }
-        break
+    const hasError = returnValidationError(name, value)
 
-      case "slug":
-        if (value.replace(/\s/g, "").length < 4) {
-          setErrors({
-            ...errors,
-            slug: "Slug must be at least 4 characters",
-          })
-        } else {
-          removeError("slug")
-        }
-        break
-
-      case "email":
-        if (
-          !new RegExp(
-            /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
-          ).test(value)
-        ) {
-          setErrors({
-            ...errors,
-            email: "Enter a valid email address",
-          })
-        } else {
-          removeError("email")
-        }
-        break
-
-      case "password":
-        if (
-          !new RegExp(/^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9]).{8,}$/).test(value)
-        ) {
-          setErrors({
-            ...errors,
-            password:
-              "Password should contains atleast 8 charaters and containing uppercase,lowercase and numbers",
-          })
-        } else {
-          removeError("password")
-        }
-        break
-
-      default:
-        break
+    if (hasError) {
+      // set error
+      setErrors({
+        ...errors,
+        [name]: hasError,
+      })
+    } else {
+      // remove error from input
+      removeError(name)
     }
   }
 
@@ -116,6 +73,7 @@ export const useForm = (callback) => {
         [e.target.name]: e.target.value,
       })
       validate(e.target.name, e.target.value)
+
       // if(name === "name"){
       //   handleSlug('name')
       //   console.log("handleChange, name: ", name, " getName: ", getName);
@@ -138,7 +96,7 @@ export const useForm = (callback) => {
   }
 
   const handleSlug = (getNameField) => {
-    let nameFieldName = getNameField ? getNameField : 'name'
+    let nameFieldName = getNameField ? getNameField : "name"
     let nameFieldValue = ""
     let newSlug = ""
 
@@ -175,7 +133,7 @@ export const useForm = (callback) => {
     handleSubmit,
     handleSlug,
     setElements,
-    setParentCategoryId
+    setParentCategoryId,
   }
 }
 
