@@ -1,0 +1,52 @@
+[
+    {
+        "page_title": "Add Subcategory",
+        "fields": [
+            {
+                "name": "name",
+                "label": "Name",
+                "tip": "",
+                "required": "true",
+                "placeholder": "Enter Name",
+                "type": "text",
+                "value": ""
+            },
+            {
+                "name": "slug",
+                "label": "Slug",
+                "tip": "use only lower-case letters, separate words with a dash (like-this)",
+                "required": "yes",
+                "placeholder": "url-friendly-name",
+                "type": "text",
+                "value": ""
+            },
+            {
+                "name": "categoryId",
+                "label": "Parent Category",
+                "tip": "",
+                "required": "true",
+                "value": 0,
+                "mandatory": "yes",
+                "options": [
+                    {
+                        "label": "Classic Cars For Sale",
+                        "value": 2
+                    },
+                    {
+                        "label": "Latest News",
+                        "value": 5
+                    },
+                    {
+                        "label": "Staff",
+                        "value": 12
+                    }
+                ],
+                "type": "select"
+            }         
+        ],
+        "btnSubmit": {
+            "label": "Add Subcategory",
+            "classes": "btn btn-primary"
+        }
+    }
+]

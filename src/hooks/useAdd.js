@@ -3,17 +3,17 @@ import { buildQuery } from "../context/CrudActions"
 import { useNavigate } from "react-router-dom"
 const axios = require("axios").default
 
-const SHARED_PROPS = ({ type, categoryId }) => {
+const SHARED_PROPS = ({ type, name, categoryId }) => {
   console.log("[useAdd] SHARED_PROPS > type: ", type)
   switch (type) {
     case "category":
       return {
-        success: "CAT !!!",
+        success: `Category '${name}' added successfully`,
         navigate: "/category/list",
       }
     case "subcategory":
       return {
-        success: "SUBCAT !!!",
+        success: `Subcategory '${name}' added successfully`,
         navigate: `/c${categoryId}/subcategory/list`,
       }
     default:
@@ -30,7 +30,7 @@ function useAddCategory() {
   //   const { id, name, slug } = formData
   const addForm = ({ name, slug, type, categoryId }) => {
     setLoading(true)
-    const props = SHARED_PROPS({ type, categoryId })
+    const props = SHARED_PROPS({ type, name, categoryId })
     const q = buildQuery({
       api: "insert",
       type: type,
@@ -54,10 +54,11 @@ function useAddCategory() {
           .post(q, formDataNew)
           .then(function (response) {
             //handle success
-            console.log(response)
+            console.log("RESPONSE: ", response)
             if (response.status === 200) {
               setAddFormStatus(true)
-              alert(`${props.success} added successfully.`)
+              console.log(`${props.success}`)
+              alert(`${props.success}`)
             }
             navigate(props.navigate)
           })

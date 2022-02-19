@@ -85,10 +85,10 @@ export const useForm = (callback) => {
   }
 
   // set parentCategory
-  const setParentCategory = (id) => {
+  const setParentCategoryId = (id) => {
     setValues({
       ...values,
-      parentCategoryId: id,
+      categoryId: id,
     })
   }
 
@@ -173,9 +173,9 @@ export const useForm = (callback) => {
     errors,
     handleChange,
     handleSubmit,
-    setParentCategory,
     handleSlug,
-    setElements
+    setElements,
+    setParentCategoryId
   }
 }
 

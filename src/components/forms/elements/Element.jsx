@@ -11,7 +11,7 @@ const Element = ({
     placeholder,
     value,
     options    
-  },errors,error
+  },categoryId,error
 }) => {
   switch (type) {
     case "text":
