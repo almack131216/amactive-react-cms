@@ -21,7 +21,7 @@
                 "value": ""
             }            
         ],
-        "btnSubmit": {
+        "btnAdd": {
             "label": "Add Category",
             "classes": "btn btn-primary"
         }

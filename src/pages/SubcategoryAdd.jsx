@@ -2,7 +2,7 @@ import { useEffect, useState, useContext } from "react"
 import { useCrumb } from "../hooks/useCrumb"
 import { useParams } from "react-router-dom"
 import CrudContext from "../context/CrudContext"
-import { useAddCategory } from "../hooks/useAdd"
+import { useFormAddCategory } from "../hooks/useFormAdd"
 import useForm from "../hooks/useFormDynamic"
 import { FormContext } from "../context/FormContext"
 import Element from "../components/forms/elements/Element"
@@ -10,14 +10,15 @@ import BtnSubmit from "../components/forms/elements/BtnSubmit"
 import formJSON from "../components/forms/data/formAddSubcategory.json"
 
 function SubcategoryAdd() {
-  // 1 CONTEXT & props
+  // CONTEXT & props
   const { cxSetBreadcrumbs } = useContext(CrudContext)
   const params = useParams()
   const { breadcrumbArr } = useCrumb({
     page: "subcategory-add",
     categoryId: params.categoryId,
   })
-  const { addForm, error, loading, addFormStatus } = useAddCategory()
+  // HOOKS
+  const { addForm, error, loading, addFormStatus } = useFormAddCategory()
   const {
     handleChange,
     handleSlug,
@@ -74,7 +75,7 @@ function SubcategoryAdd() {
       })
     }
   }, [addFormStatus])
-  const { fields, page_title, btnSubmit } = elements ?? {}
+  const { fields, page_title, btnAdd } = elements ?? {}
 
   // Submitting...
   // If form data was added successfully...
@@ -118,15 +119,13 @@ function SubcategoryAdd() {
           <h3>{page_title}</h3>
           <form>
             {/* Dynamic Fields */}
-            {fields ? (
-              <>
-                <Element field={fields[0]} error={errors[fields[0].name]} />
-                <Element field={fields[1]} error={errors[fields[1].name]} />
-                <Element field={fields[2]} error={errors[fields[2].name]} />
-              </>
-            ) : null}
+            {fields
+              ? fields.map((field, i) => (
+                  <Element key={i} field={field} error={errors[field.name]} />
+                ))
+              : null}
             {/* Submit Button */}
-            {btnSubmit && <BtnSubmit props={btnSubmit} />}
+            {fields && btnAdd && <BtnSubmit props={btnAdd} canSubmit={true}/>}
           </form>
         </div>
       </FormContext.Provider>

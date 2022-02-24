@@ -26,7 +26,7 @@ export const useForm = (callback) => {
   }
 
   const validate = (name, value) => {
-    console.log("validate: ", name, value)
+    // console.log("validate: ", name, value)
     const hasError = returnValidationError(name, value)
 
     if (hasError) {
@@ -52,6 +52,7 @@ export const useForm = (callback) => {
   // Method to handle form inputs
   const handleChange = (getName, e) => {
     console.log("handleChange")
+    console.log("input name: ", e.target.type)
 
     const newElements = { ...elements }
     newElements.fields.forEach((field) => {
@@ -70,7 +71,10 @@ export const useForm = (callback) => {
       setElements(newElements)
       setValues({
         ...values,
-        [e.target.name]: e.target.value,
+        [e.target.name]:
+          e.target.name === "categoryId" || e.target.name === "subcategoryId"
+            ? parseInt(e.target.value)
+            : e.target.value,
       })
       validate(e.target.name, e.target.value)
 

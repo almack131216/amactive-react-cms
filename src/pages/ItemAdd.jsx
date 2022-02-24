@@ -3,7 +3,7 @@ import { useParams } from "react-router-dom"
 import { useCrumb } from "../hooks/useCrumb"
 import { Form, Button, Row, Col } from "react-bootstrap"
 import CrudContext from "../context/CrudContext"
-import { useAddCategory } from "../hooks/useAdd"
+import { useFormAddCategory } from "../hooks/useFormAdd"
 
 function ItemAdd() {
   // 1 CONTEXT & props
@@ -16,7 +16,7 @@ function ItemAdd() {
     categoryId: params.categoryId,
     subcategoryId: params.subcategoryId
   })
-  const { addForm, error, loading, isSubmitting } = useAddCategory()
+  const { addForm, error, loading, isSubmitting } = useFormAddCategory()
 
   // Fetch listing to edit
   useEffect(() => {

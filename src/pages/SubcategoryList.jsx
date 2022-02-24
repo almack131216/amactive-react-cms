@@ -12,7 +12,10 @@ function SubcategoryList() {
   console.log("[P]--SubcategoryList")
   const { cxSetBreadcrumbs } = useContext(CrudContext)
   const params = useParams()
-  const {breadcrumbArr} = useCrumb({page:'subcategory-list', categoryId: params.categoryId})
+  const { breadcrumbArr } = useCrumb({
+    page: "subcategory-list",
+    categoryId: params.categoryId,
+  })
   const isMounted = useRef(true)
   const [categoryId, setCategoryId] = useState(
     params.categoryId ? params.categoryId : null
@@ -20,20 +23,19 @@ function SubcategoryList() {
 
   const q = buildQuery({
     api: "subcategories",
-    categoryId: categoryId,
+    categoryId: params.categoryId ? params.categoryId : null,
   })
 
   const { loading, error, subcategories } = useFetchCategoryList(q, {
     type: "subcategory",
+    categoryId: params.categoryId ? params.categoryId : null
   })
 
   const { deleteCategory, deletedId } = useDeleteCategory()
 
   useEffect(() => {
-
-        console.log("LOAD BREADCRUMBS...", breadcrumbArr)
-        cxSetBreadcrumbs(breadcrumbArr)
-
+    console.log("LOAD BREADCRUMBS...", breadcrumbArr)
+    cxSetBreadcrumbs(breadcrumbArr)
   }, [subcategories])
 
   if (error) {
@@ -54,7 +56,9 @@ function SubcategoryList() {
         title='Subcategories'
         addButton={{
           text: "add subcategory",
-          slug: `/c${categoryId}/subcategory/add`,
+          slug: categoryId
+            ? `/c${categoryId}/subcategory/add`
+            : `/subcategory/add`,
         }}
       />
 
@@ -83,7 +87,7 @@ function SubcategoryList() {
                     </td>
                     <td>
                       <Link
-                        to={`/c${subcategory.categoryId}/subcategory/edit/${subcategory.id}`}
+                        to={`/subcategory/edit/${subcategory.id}`}
                         className='btn btn-outline-primary btn-sm'
                       >
                         Edit

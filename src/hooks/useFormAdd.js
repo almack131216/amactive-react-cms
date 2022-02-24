@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom"
 const axios = require("axios").default
 
 const SHARED_PROPS = ({ type, name, categoryId }) => {
-  console.log("[useAdd] SHARED_PROPS > type: ", type)
+  console.log("[useFormAdd] SHARED_PROPS > type: ", type)
   switch (type) {
     case "category":
       return {
@@ -21,7 +21,7 @@ const SHARED_PROPS = ({ type, name, categoryId }) => {
   }
 }
 
-function useAddCategory() {
+function useFormAddCategory() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState(null)
   const [addFormStatus, setAddFormStatus] = useState(null)
@@ -80,4 +80,4 @@ function useAddCategory() {
   return { addForm, error, loading, addFormStatus }
 }
 
-export { useAddCategory }
+export { useFormAddCategory }

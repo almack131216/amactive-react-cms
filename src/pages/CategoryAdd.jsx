@@ -1,7 +1,7 @@
 import { useEffect, useState, useContext } from "react"
 import { useCrumb } from "../hooks/useCrumb"
 import CrudContext from "../context/CrudContext"
-import { useAddCategory } from "../hooks/useAdd"
+import { useFormAddCategory } from "../hooks/useFormAdd"
 import useForm from "../hooks/useFormDynamic"
 import { FormContext } from "../context/FormContext"
 import Element from "../components/forms/elements/Element"
@@ -14,8 +14,8 @@ function CategoryAdd() {
   const { breadcrumbArr } = useCrumb({
     page: "category-add",
   })
-  const { addForm, error, loading, addFormStatus } = useAddCategory()
-  const { handleChange, handleSlug, elements, values, errors, handleSubmit, setElements } =
+  const { addForm, error, loading, addFormStatus } = useFormAddCategory()
+  const { handleChange, elements, values, errors, handleSubmit, setElements } =
     useForm(addCategory)
 
   // SET form field elements
@@ -33,7 +33,7 @@ function CategoryAdd() {
       })
     }
   }, [addFormStatus])
-  const { fields, page_title, btnSubmit } = elements ?? {}
+  const { fields, page_title, btnAdd } = elements ?? {}
 
   // Submitting...
   // If form data was added successfully...
@@ -68,7 +68,6 @@ function CategoryAdd() {
       <FormContext.Provider
         value={{
           handleChange,
-          handleSlug,
           handleSubmit,
           values,
           loading,
@@ -86,7 +85,7 @@ function CategoryAdd() {
                 ))
               : null}
             {/* Submit Button */}
-            {btnSubmit && <BtnSubmit props={btnSubmit} />}
+            {btnAdd && <BtnSubmit props={btnAdd} canSubmit={true} />}
           </form>
         </div>
       </FormContext.Provider>

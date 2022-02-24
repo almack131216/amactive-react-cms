@@ -74,7 +74,7 @@ function useCrumb({ page, categoryId, subcategoryId }) {
   let activeCategoryCrumb = null
   let activeSubcategoryCrumb = null
 
-  if (categoryId && activeCategory.id)
+  if (activeCategory.id)
     activeCategoryCrumb = {
       page: "category-active",
       id: activeCategory.id,
@@ -83,7 +83,7 @@ function useCrumb({ page, categoryId, subcategoryId }) {
       }`,
       slug: `/c${activeCategory.id}/subcategory/list`,
     }
-  if (subcategoryId && activeSubcategory.id)
+  if (activeSubcategory.id)
     activeSubcategoryCrumb = {
       page: "subcategory-active",
       id: activeSubcategory.id,
@@ -96,9 +96,9 @@ function useCrumb({ page, categoryId, subcategoryId }) {
   activeCategoryCrumb && breadcrumbArr.push(activeCategoryCrumb)
   activeSubcategoryCrumb && breadcrumbArr.push(activeSubcategoryCrumb)
 
-  console.log("CRUMB cat:", categoryId, activeCategory)
-  console.log("CRUMB subcat:", subcategoryId, activeSubcategory)
-  console.log("CRUMB ARR:", breadcrumbArr)
+  // console.log("CRUMB cat:", categoryId, activeCategory)
+  // console.log("CRUMB subcat:", subcategoryId, activeSubcategory)
+  // console.log("CRUMB ARR:", breadcrumbArr)
   return { breadcrumbArr }
 }
 

@@ -1,6 +1,7 @@
 [
     {
         "page_title": "Add Subcategory",
+        "page_title_edit": "Edit Subcategory",
         "fields": [
             {
                 "name": "name",
@@ -27,6 +28,7 @@
                 "required": "true",
                 "value": 0,
                 "mandatory": "yes",
+                "type": "select",
                 "options": [
                     {
                         "label": "Classic Cars For Sale",
@@ -40,12 +42,15 @@
                         "label": "Staff",
                         "value": 12
                     }
-                ],
-                "type": "select"
+                ]
             }         
         ],
-        "btnSubmit": {
+        "btnAdd": {
             "label": "Add Subcategory",
+            "classes": "btn btn-primary"
+        },
+        "btnUpdate": {
+            "label": "Update Subcategory",
             "classes": "btn btn-primary"
         }
     }
