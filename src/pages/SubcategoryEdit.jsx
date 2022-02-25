@@ -14,10 +14,10 @@ import { useFetchCategory } from "../hooks/useFetchSingle"
 function SubcategoryAdd() {
   // console.log("[P]--SubcategoryEdit")
   // 1 CONTEXT
-  const {
-    cxSetBreadcrumbs,
+  const {    
     activeCategory,
     activeSubcategory,
+    cxSetBreadcrumbs,
     cxSetActiveCategory,
     cxSetActiveSubcategory,
   } = useContext(CrudContext)
@@ -157,7 +157,6 @@ function SubcategoryAdd() {
     console.log("editSubcategory: values = ", values)
     if (values.length === 0) return
     // const { name, slug, categoryId } = values
-
     console.log(
       "editSubcategory: editing... name: " + values.name + ", slug: ",
       values.slug + ", categoryId: ",
@@ -166,23 +165,32 @@ function SubcategoryAdd() {
     submitForm({
       id,
       values,
-      categoryId: values.categoryId,
       type: "subcategory",
     })
-
     setCanSubmit(false)
   }
   // (END) Submitting
 
   const highlightFieldChange = (getFieldValue, getInitValue, getFieldError) => {
-    return getFieldValue !== getInitValue ? <span style={!getFieldError ? {backgroundColor: 'green',color:'white'} : {backgroundColor: 'red',color:'white'}}>{getFieldValue}</span> : getFieldValue
+    return getFieldValue !== getInitValue ? (
+      <span
+        style={
+          !getFieldError
+            ? { backgroundColor: "green", color: "white" }
+            : { backgroundColor: "red", color: "white" }
+        }
+      >
+        {getFieldValue}
+      </span>
+    ) : (
+      getFieldValue
+    )
   }
 
   // RETURNED PROPS
   if (error) return <h1>Error: {error}</h1>
-  if (formError) return <h3>There was an error updating</h3>
-
   if (loading) return <h3>Loading...</h3>
+  if (formError) return <h3>There was an error updating</h3>
   if (formLoading) return <h3>Updating...</h3>
 
   console.log("FIELDS:", fields)
@@ -222,43 +230,62 @@ function SubcategoryAdd() {
             {fields && btnUpdate && (
               <BtnSubmit props={btnUpdate} canSubmit={canSubmit} />
             )}
-            {fields && (
-              <ul>
-                <li>canSubmit: {canSubmit === true ? "yes" : "no"}</li>
-                <li>values: {Object.keys(values).length}</li>
-                <li>
-                  errors: {Object.keys(errors).length},{" "}
-                  {Object.keys(errors).map((err, index) => {
-                    return index === 0 ? err : `, ${err}`
-                  })}
-                </li>
-                <li>loading: {loading}</li>
-              </ul>
-            )}
             <hr />
-            {
-              fields && (
-
-            <div className='row'>
-              <div className='col-sm-4'>
-                <h3>Old</h3>
-                <ul>
-                  <li>name: {categoryObjInit.name}</li>
-                  <li>slug: {categoryObjInit.slug}</li>
-                  <li>categoryId: {categoryObjInit.categoryId}</li>
-                </ul>
+            {fields && (
+              <div className='row'>
+                <div className='col-sm-4'>
+                  <h3>FORM</h3>
+                  <ul>
+                    <li>canSubmit: {canSubmit === true ? "yes" : "no"}</li>
+                    <li>values: {Object.keys(values).length}</li>
+                    <li>
+                      errors: {Object.keys(errors).length},{" "}
+                      {Object.keys(errors).map((err, index) => {
+                        return index === 0 ? err : `, ${err}`
+                      })}
+                    </li>
+                    <li>loading: {loading}</li>
+                  </ul>
+                </div>
+                <div className='col-sm-4'>
+                  <h3>Old</h3>
+                  <ul>
+                    <li>name: {categoryObjInit.name}</li>
+                    <li>slug: {categoryObjInit.slug}</li>
+                    <li>categoryId: {categoryObjInit.categoryId}</li>
+                  </ul>
+                </div>
+                <div className='col-sm-4'>
+                  <h3>STATE</h3>
+                  <ul>
+                    <li>
+                      name:{" "}
+                      {highlightFieldChange(
+                        fields[0].value,
+                        categoryObjInit.name,
+                        errors.name
+                      )}
+                    </li>
+                    <li>
+                      slug:{" "}
+                      {highlightFieldChange(
+                        fields[1].value,
+                        categoryObjInit.slug,
+                        errors.slug
+                      )}
+                    </li>
+                    <li>
+                      categoryId:{" "}
+                      {highlightFieldChange(
+                        fields[2].value,
+                        categoryObjInit.categoryId,
+                        errors.categoryId
+                      )}
+                    </li>
+                  </ul>
+                </div>
               </div>
-              <div className='col-sm-4'>
-                <h3>STATE</h3>
-                <ul>
-                <li>name: {highlightFieldChange(fields[0].value,categoryObjInit.name,errors.name)}</li>
-                  <li>slug: {highlightFieldChange(fields[1].value,categoryObjInit.slug,errors.slug)}</li>
-                  <li>categoryId: {highlightFieldChange(fields[2].value,categoryObjInit.categoryId,errors.categoryId)}</li>
-                </ul>
-              </div>
-            </div>
-              )
-            }
+            )}
           </form>
         </div>
       </FormContext.Provider>
