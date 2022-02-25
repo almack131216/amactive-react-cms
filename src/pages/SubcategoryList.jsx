@@ -10,7 +10,7 @@ import PageTitle from "../components/PageTitle"
 
 function SubcategoryList() {
   console.log("[P]--SubcategoryList")
-  const { cxSetBreadcrumbs } = useContext(CrudContext)
+  const { activeCategory, cxSetActiveSubcategory, cxSetBreadcrumbs } = useContext(CrudContext)
   const params = useParams()
   const { breadcrumbArr } = useCrumb({
     page: "subcategory-list",
@@ -34,9 +34,11 @@ function SubcategoryList() {
   const { deleteCategory, deletedId } = useDeleteCategory()
 
   useEffect(() => {
-    console.log("LOAD BREADCRUMBS...", breadcrumbArr)
+    console.log("LOAD BREADCRUMBS... ", breadcrumbArr)
+    cxSetActiveSubcategory({})
     cxSetBreadcrumbs(breadcrumbArr)
-  }, [subcategories])
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [activeCategory])
 
   if (error) {
     return <h1>Error: {error}</h1>
@@ -62,7 +64,7 @@ function SubcategoryList() {
         }}
       />
 
-      {!subcategories.length && <p>No subcategories</p>}
+      {!subcategories.length && <p>This category is empty.</p>}
       {subcategories.length > 0 && (
         <>
           <Table striped bordered hover>

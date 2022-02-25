@@ -51,8 +51,10 @@ export const useForm = (callback) => {
 
   // Method to handle form inputs
   const handleChange = (getName, e) => {
+    let { name: fieldName, value: fieldValue, type: fieldType } = e.target
     console.log("handleChange")
-    console.log("input name: ", e.target.type)
+    console.log("input name: ", fieldType)
+    fieldValue = fieldType === 'select-one' ? parseInt(fieldValue) : fieldValue
 
     const newElements = { ...elements }
     newElements.fields.forEach((field) => {
@@ -64,25 +66,18 @@ export const useForm = (callback) => {
             break
 
           default:
-            field["value"] = e.target.value
+            field["value"] = fieldValue
             break
         }
       }
-      setElements(newElements)
+
       setValues({
         ...values,
-        [e.target.name]:
-          e.target.name === "categoryId" || e.target.name === "subcategoryId"
-            ? parseInt(e.target.value)
-            : e.target.value,
+        [fieldName]: fieldValue,
       })
-      validate(e.target.name, e.target.value)
-
-      // if(name === "name"){
-      //   handleSlug('name')
-      //   console.log("handleChange, name: ", name, " getName: ", getName);
-      // }
+      validate(fieldName, fieldValue)
     })
+    setElements(newElements)
 
     console.log("Elements: ", elements)
     console.log("Errors: ", errors)
@@ -106,7 +101,7 @@ export const useForm = (callback) => {
 
     const newElements = { ...elements }
     newElements.fields.forEach((field) => {
-      const { type, name } = field
+      const { name } = field
       if (name === nameFieldName) {
         nameFieldValue = field["value"]
       }

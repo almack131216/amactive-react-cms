@@ -11,16 +11,19 @@ import PageTitle from "../components/PageTitle"
 function CategoryList() {
   console.log("[P]--CategoryList")
   // 1 CONTEXT functions & props
-  const { cxSetBreadcrumbs } = useContext(CrudContext)
+  const { cxSetActiveCategory, cxSetActiveSubCategory, cxSetBreadcrumbs } = useContext(CrudContext)
   const {breadcrumbArr} = useCrumb({page:'category-list'})
   // 2 FETCH list
   const q = buildQuery({api: "categories"})
   console.log("Q: ", q)
   const { loading, error, categories } = useFetchCategoryList(q, {type: "category"})
+  
   // 3 DELETE category  
   const { deleteCategory, deletedId } = useDeleteCategory()
   // 4 USEEFFECT
   useEffect(() => {
+    // cxSetActiveCategory({})
+    // cxSetActiveSubCategory({})
     cxSetBreadcrumbs(breadcrumbArr)
   }, [])
   
@@ -50,9 +53,12 @@ function CategoryList() {
                 <tr key={category.id}>
                   <td>{category.id}</td>
                   <td>
-                    <Link to={`/c${category.id}/subcategory/list`}>
+                    {
+                      category.subcategoryCount > 0 ? <Link to={`/c${category.id}/subcategory/list`}>
                       {category.name}
-                    </Link>
+                    </Link> : category.name
+                    }
+                    
                   </td>
                   <td>
                     <Link

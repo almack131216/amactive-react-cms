@@ -1,8 +1,8 @@
 export const useValidation = () => {
-  console.log("useValidation...")
+  // console.log("useValidation...")
 
   const returnValidationError = (name, value) => {
-    console.log("validate: ", name, value)
+    console.log("returnValidationError: ", name, value)
     // validate each input value
     switch (name) {
       case "name":
@@ -15,6 +15,12 @@ export const useValidation = () => {
       case "slug":
         if (value.replace(/\s/g, "").length < 4) {
           return "Slug must be at least 4 characters"
+        }
+        break
+
+      case "categoryId":
+        if (value === 0) {
+          return "Category not set"
         }
         break
 

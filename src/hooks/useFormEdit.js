@@ -1,6 +1,7 @@
-import { useState } from "react"
+import { useState, useContext } from "react"
 import { buildQuery } from "../context/CrudActions"
-// import { useNavigate } from "react-router-dom"
+import CrudContext from "../context/CrudContext"
+import { useNavigate } from "react-router-dom"
 const axios = require("axios").default
 
 const SHARED_PROPS = ({ type, name, categoryId }) => {
@@ -10,13 +11,13 @@ const SHARED_PROPS = ({ type, name, categoryId }) => {
       return {
         success: `Category updated successfully`,
         navigate: "/category/list",
-        error: `There was an error updating this category`
+        error: `There was an error updating this category`,
       }
     case "subcategory":
       return {
         success: `Subcategory updated successfully`,
         navigate: `/c${categoryId}/subcategory/list`,
-        error: `There was an error updating this subcategory`
+        error: `There was an error updating this subcategory`,
       }
     default:
       return {}
@@ -28,12 +29,13 @@ function useFormEditCategory() {
   const [error, setError] = useState(null)
   const [formStatus, setFormStatus] = useState(null)
   const [formStatusMsg, setFormStatusMsg] = useState(null)
-  // const navigate = useNavigate()
+  const { categories, activeCategory, cxSetActiveCategoryById, cxSetActiveCategory, activeSubcategory, cxSetActiveSubcategory } = useContext(CrudContext)
+  const navigate = useNavigate()
 
   //   const { id, name, slug } = formData
-  const submitForm = ({ id, values, type, categoryId }) => {
+  const submitForm = ({ id, values, type }) => {
     setLoading(true)
-    const {name, slug} = values;
+    const { name, slug, categoryId } = values
     const props = SHARED_PROPS({ type, name, categoryId })
     const q = buildQuery({
       api: "update",
@@ -41,22 +43,30 @@ function useFormEditCategory() {
       id,
     })
     console.log("[POST] Q: ", q)
-    console.log("name: ", name)
+    console.log("values: ", values)
 
     let formDataNew = new FormData()
     formDataNew.append("id", id)
     name && formDataNew.append("name", name)
     slug && formDataNew.append("slug", slug)
     type && formDataNew.append("type", type)
-    if(type === 'subcategory' && categoryId){
+    if (type === "subcategory" && categoryId) {
       formDataNew.append("categoryId", categoryId)
     }
 
-    console.log("formDataNew: ", formDataNew, 'name: ', name, 'slug: ', slug, 'categoryId: ', categoryId)
+    console.log(
+      "formDataNew: ",
+      formDataNew,
+      "name: ",
+      name,
+      "slug: ",
+      slug,
+      "categoryId: ",
+      categoryId
+    )
 
     const updateData = async () => {
-      console.log("updateData");
-      // return
+      console.log("updateData")
 
       try {
         await axios
@@ -69,25 +79,39 @@ function useFormEditCategory() {
               setFormStatus(true)
               console.log(`${props.success}`)
               alert(`${props.success}`)
+
+              if(type === "subcategory") {
+                categoryId && categories.length && cxSetActiveCategoryById(categoryId)
+
+                const newActiveSubcategory = {
+                  id,
+                  name: name ? name : activeSubcategory.name,
+                  slug: slug ? slug : activeSubcategory.slug,
+                  categoryId: categoryId ? categoryId : activeSubcategory.categoryId
+                }
+
+                cxSetActiveSubcategory(newActiveSubcategory)
+                categoryId && !categories.length && navigate(`/c${categoryId}/subcategory/list`)
+              }
             }
             // navigate(props.navigate)
           })
-          .catch( (error) => {
+          .catch((error) => {
             //handle error
-            console.log('Err: ', error.response)
+            console.log("Err: ", error.response)
             if (error.response) {
-              console.log(error.response.data);
-              console.log(error.response.status);
+              console.log(error.response.data)
+              console.log(error.response.status)
               // console.log(error.response.headers);
             }
-            setFormStatusMsg('xxx')
+            setFormStatusMsg("xxx")
             setFormStatus(false)
             alert(`${props.error}`)
           })
       } catch (err) {
         console.log("Error: ", err)
         setFormStatusMsg(err)
-        setError(err)        
+        setError(err)
         console.error(err)
       }
       setLoading(false)

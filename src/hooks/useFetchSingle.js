@@ -3,7 +3,7 @@ import CrudContext from "../context/CrudContext"
 const axios = require("axios").default
 
 function useFetchCategory(url, options) {
-  console.log("[useFetch] useFetchCategorySingle | url:", url)
+  // console.log("[useFetch] useFetchCategorySingle | url:", url)
   // 1 CONTEXT functions & props
   const { cxSetActiveCategory, cxSetActiveSubcategory } =
     useContext(CrudContext)
@@ -16,7 +16,7 @@ function useFetchCategory(url, options) {
   // 4 LOAD useEffect
   useEffect(() => {
     const fetchData = async () => {
-      console.log('------> fetchData');
+      // console.log('------> fetchData');
       try {
         const response = await axios.get(url)
         const data = response.data
@@ -28,8 +28,9 @@ function useFetchCategory(url, options) {
             status: parseInt(data[0].status),
             slug: data[0].slug,
             name: data[0].name,
+            categoryId: data[0].categoryId ? parseInt(data[0].categoryId) : null,
+            categoryName: data[0].categoryName ? data[0].categoryName : null
           }
-          console.log(dataLite)
           setCategoryObj(dataLite)
 
           if (type === "category") cxSetActiveCategory(dataLite)
@@ -105,6 +106,7 @@ function useFetchItem(url, options) {
             id: data[0].subcategoryId,
             name: data[0].subcategoryName,
             slug: data[0].subcategorySlug,
+            categoryId: data[0].categoryId,
           })
         }
         setLoading(false)

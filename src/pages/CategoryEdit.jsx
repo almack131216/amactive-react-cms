@@ -11,8 +11,14 @@ const axios = require("axios").default
 function CategoryEdit() {
   console.log("[P]--CategoryEdit")
   // 1 CONTEXT
-  const { cxSetActiveCategory, cxSetBreadcrumbs, activeCategory } =
-    useContext(CrudContext)
+  const {
+    categories,
+    cxSetCategories,
+    cxSetActiveCategory,
+    cxSetBreadcrumbs,
+    activeCategory,
+  } = useContext(CrudContext)
+  const [categoriesInit, setCategoriesInit] = useState([])
   const params = useParams()
   const { breadcrumbArr } = useCrumb({
     page: "category-edit",
@@ -32,6 +38,7 @@ function CategoryEdit() {
   // USEEFFECT
   useEffect(() => {
     cxSetBreadcrumbs(breadcrumbArr)
+    console.log("cats: ", categories)
   }, [activeCategory])
 
   // 2Do - form validations
@@ -46,6 +53,27 @@ function CategoryEdit() {
   // RETURNED PROPS
   if (error) return <h1>Error: {error}</h1>
   if (loading) return <h1>Loading...</h1>
+
+  const updateRootCats = (getArr) => {
+    const { id, name, slug } = getArr
+    console.log("updateRootCats: ", categories, getArr)
+
+    // const newCats = [...categories]
+    // newCats.map(obj => {
+    //   if(obj.id === getArr.id){
+    //     return {...getArr}
+    //   }
+    //   return obj
+    // })
+    const newCats = categories.map((obj) => {
+      return obj.id === id ? {...obj, name: getArr.name, slug: getArr.slug} : obj
+    })
+    // newCats.push(getArr)
+    console.log("updateRootCats: ", newCats)
+    setCategoriesInit(categories)
+    cxSetCategories(newCats)
+    cxSetActiveCategory(getArr)
+  }
 
   // 2Do - custom hook
   const updateForm = ({ id, name, slug }) => {
@@ -72,11 +100,16 @@ function CategoryEdit() {
         console.log(response)
         if (response.status === 200) {
           alert("Category update successfully.")
-          cxSetActiveCategory({
+
+          const updatedCategory = {
             id: id,
-            name: formData.name,
-            slug: formData.slug,
-          })
+            name: formData.name ? formData.name : name,
+            slug: formData.slug ? formData.slug : slug,
+          }
+
+          console.log("updatedCategory: ", updatedCategory, categories)
+          updateRootCats(updatedCategory)
+          // cxSetCategories(newCategories)
         }
       })
       .catch(function (response) {
@@ -123,6 +156,21 @@ function CategoryEdit() {
       <Button type='submit' onClick={() => updateForm({ id, name, slug })}>
         update
       </Button>
+
+      <div className='row'>
+        <div className='col-sm-4'>
+          <h3>Old</h3>
+          {categoriesInit.map((obj) => (
+            <li key={obj.id} style={ obj.id === id  ? {backgroundColor: 'red',color:"white" } : null}>{obj.name}</li>
+          ))}
+        </div>
+        <div className='col-sm-4'>
+          <h3>STATE</h3>
+          {categories.map((obj) => (
+            <li key={obj.id} style={ obj.id === id  ? {backgroundColor: 'green',color:"white" } : null}>{obj.name}</li>
+          ))}
+        </div>
+      </div>
     </>
   )
 }

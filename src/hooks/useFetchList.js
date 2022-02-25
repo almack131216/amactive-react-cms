@@ -24,7 +24,7 @@ function useFetchCategoryList(url, options) {
       try {
         const response = await axios.get(url)
         const data = response.data
-        console.log("data:", data)
+        console.log("fetchData:", data)
 
         if (data.length) {
           type === "category" && cxSetCategories(data)
@@ -38,6 +38,7 @@ function useFetchCategoryList(url, options) {
               id: data[0].id,
               name: data[0].name,
               slug: data[0].slug,
+              categoryId: data[0].categoryId
             })
             cxSetSubcategories(data)
           }
@@ -55,7 +56,8 @@ function useFetchCategoryList(url, options) {
     }
 
     // TRIGGER function
-    fetchData()
+    !categories.length && type === "category" && fetchData()
+    type === "subcategory" && fetchData()
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
@@ -86,6 +88,7 @@ function useFetchItems(url, options) {
             id: data[0].subcategoryId,
             name: data[0].subcategoryName,
             slug: data[0].subcategorySlug,
+            categoryId: data[0].categoryId,
           })
           cxSetItems(data)
         } else {

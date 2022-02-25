@@ -32,18 +32,21 @@
                 "options": [
                     {
                         "label": "Classic Cars For Sale",
+                        "slug": "classic-cars-for-sale",
                         "value": 2
                     },
                     {
                         "label": "Latest News",
+                        "slug": "latest-news",
                         "value": 5
                     },
                     {
                         "label": "Staff",
+                        "slug": "staff",
                         "value": 12
                     }
                 ]
-            }         
+            }
         ],
         "btnAdd": {
             "label": "Add Subcategory",

@@ -3,11 +3,13 @@ import { Link } from "react-router-dom"
 import CrudContext from "../context/CrudContext"
 
 function Home() {
-  const { cxSetBreadcrumbs } = useContext(CrudContext)
+  const { loading, error, categories, cxSetBreadcrumbs } = useContext(CrudContext)
 
   useEffect(() => {
     cxSetBreadcrumbs({})
   }, [])
+
+  if(loading) return <h3>Loading...</h3>
 
   return (
     <>
@@ -17,7 +19,12 @@ function Home() {
           <Link to='/'>Home</Link>
         </li>
         <li>
-          <Link to='/category/list'>Categories</Link>
+          {
+            !categories.length && <Link to='/category/add'>Add Category</Link>            
+          }
+          {
+            categories.length && <Link to='/category/list'>Categories ({categories.length})</Link>
+          }
         </li>
       </ul>
     </>
