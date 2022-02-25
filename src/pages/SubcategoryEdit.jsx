@@ -12,9 +12,10 @@ import formJSON from "../components/forms/data/formAddSubcategory.json"
 import { useFetchCategory } from "../hooks/useFetchSingle"
 
 function SubcategoryAdd() {
-  // console.log("[P]--SubcategoryEdit")
+  // console.log("[P]--[SubcategoryEdit]")
   // 1 CONTEXT
-  const {    
+  const {
+    showCLG,
     activeCategory,
     activeSubcategory,
     cxSetBreadcrumbs,
@@ -71,8 +72,8 @@ function SubcategoryAdd() {
   // USEEFFECT
   // SET form field elements
   useEffect(() => {
-    console.log(
-      "useEffect: categoryObj=",
+    showCLG && console.log(
+      "[P]--[useEffect] > categoryObj=",
       categoryObj,
       Object.keys(categoryObj).length
     )
@@ -80,7 +81,7 @@ function SubcategoryAdd() {
     let loadElements = formJSON[0]
     // 2 - if adding with category in URL
     if (Object.keys(categoryObj).length) {
-      console.log("useEffect > forceCategorySelected: ", 12)
+      showCLG && console.log("[P]--[useEffect] > forceCategorySelected: ", 12)
       // const newElements = forceCategorySelected(loadElements, 12)
 
       const newElements = { ...loadElements }
@@ -90,9 +91,9 @@ function SubcategoryAdd() {
       newElements.fields[0].value = name
       newElements.fields[1].value = slug
       newElements.fields[2].value = categoryId
-      console.log("newElements: ", newElements)
+      showCLG && console.log("[P]--[useEffect] > newElements: ", newElements)
       setElements(newElements)
-      console.log("loadElements: ", loadElements)
+      showCLG && console.log("[P]--[useEffect] > loadElements: ", loadElements)
       // 3 - set breadcrumbs
       cxSetActiveCategory({
         id: categoryId,
@@ -118,7 +119,7 @@ function SubcategoryAdd() {
 
   // can submit?
   useEffect(() => {
-    console.log("/////// isFormValid")
+    showCLG && console.log("[P]--[useEffect] > isFormValid()")
     values && Object.keys(values).length && isFormValid()
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [values, errors])
@@ -139,11 +140,11 @@ function SubcategoryAdd() {
     }
 
     if (hasChanged > 0 && tmpArr !== {} && !Object.keys(errors).length) {
-      console.log("FIELDS CHANGED", tmpArr, values, activeSubcategory)
+      showCLG && console.log("[P]--[isFormValid] > FIELDS CHANGED", tmpArr, values, activeSubcategory)
       // return false
       setCanSubmit(true)
     } else {
-      console.log("NO CHANGE")
+      showCLG && console.log("[P]--[isFormValid] > NO CHANGE")
       setCanSubmit(false)
     }
     // return true
@@ -153,12 +154,12 @@ function SubcategoryAdd() {
   // If form data was added successfully...
   // clear field values
   function editSubcategory() {
-    console.log("editSubcategory: ", elements)
-    console.log("editSubcategory: values = ", values)
+    showCLG && console.log("[P]--[editSubcategory] > editSubcategory: ", elements)
+    showCLG && console.log("[P]--[editSubcategory] > values = ", values)
     if (values.length === 0) return
     // const { name, slug, categoryId } = values
-    console.log(
-      "editSubcategory: editing... name: " + values.name + ", slug: ",
+    showCLG && console.log(
+      "[P]--[editSubcategory] > editing... name: " + values.name + ", slug: ",
       values.slug + ", categoryId: ",
       values.categoryId
     )
@@ -193,7 +194,7 @@ function SubcategoryAdd() {
   if (formError) return <h3>There was an error updating</h3>
   if (formLoading) return <h3>Updating...</h3>
 
-  console.log("FIELDS:", fields)
+  showCLG && console.log("[P]-- FIELDS:", fields)
   // XML
   return (
     <>

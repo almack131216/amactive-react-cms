@@ -1,8 +1,8 @@
 export const useValidation = () => {
-  // console.log("useValidation...")
+  // console.log("[useValidation] > useValidation...")
 
   const returnValidationError = (name, value) => {
-    console.log("returnValidationError: ", name, value)
+    // console.log("[useValidation] > returnValidationError(): ", name, value)
     // validate each input value
     switch (name) {
       case "name":

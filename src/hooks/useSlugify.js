@@ -1,5 +1,5 @@
 export const useSlugify = () => {
-  console.log("useSlugify...")
+  // console.log("[useSlugify] > useSlugify()")
 
   const slugMe = (string) => {    
     const slug = string
@@ -12,7 +12,7 @@ export const useSlugify = () => {
       .replace(/^-+/, "")
       .replace(/-+$/, "")
 
-      console.log("slugMe: ", string, slug)
+      // console.log("[useSlugify] > slugMe: ", string, slug)
       return slug
   }
 

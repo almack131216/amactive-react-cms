@@ -11,7 +11,7 @@ import formJSON from "../components/forms/data/formAddSubcategory.json"
 
 function SubcategoryAdd() {
   // CONTEXT & props
-  const { cxSetBreadcrumbs } = useContext(CrudContext)
+  const { showCLG, cxSetBreadcrumbs } = useContext(CrudContext)
   const params = useParams()
   const { breadcrumbArr } = useCrumb({
     page: "subcategory-add",
@@ -32,7 +32,7 @@ function SubcategoryAdd() {
 
   // SET categoryId
   const forceCategorySelected = (loadElements, id) => {
-    loadElements && console.log("forceCategorySelected: ", elements, id);
+    loadElements && showCLG && console.log("[P]--SubcategoryAdd > forceCategorySelected: ", elements, id);
     if (loadElements && id) {
       const newElements = {...loadElements}
       //find the index of object from array that you want to update
@@ -48,20 +48,20 @@ function SubcategoryAdd() {
 
   // SET form field elements
   useEffect(() => {
-    console.log("useEffect", params.categoryId);
+    showCLG && console.log("[P]--SubcategoryAdd > useEffect > params.categoryId: ", params.categoryId);
     // 1 - load fields from JSON
     let loadElements = formJSON[0]
     // 2 - if adding with category in URL
     if(params.categoryId){
       // 2.1 - set default categoryId
-      console.log("useEffect > forceCategorySelected: ", params.categoryId);
+      showCLG && console.log("[P]--SubcategoryAdd > useEffect > params.categoryId: ", params.categoryId);
       const newElements = forceCategorySelected(loadElements, params.categoryId)
       setElements(newElements)
     }else{
       // 2.2 - load default fields from JSON
       setElements(loadElements)
     }
-    console.log("loadElements: ", loadElements)
+    showCLG && console.log("[P]--SubcategoryAdd > useEffect > loadElements: ", loadElements)
     // 3 - set breadcrumbs
     cxSetBreadcrumbs(breadcrumbArr)
   }, [params.categoryId])
@@ -69,7 +69,7 @@ function SubcategoryAdd() {
   // SET field values to be empty when subcategory is added
   useEffect(() => {
     if (addFormStatus) {
-      console.log("------------RESET")
+      showCLG && console.log("[P]--SubcategoryAdd > useEffect > --- RESET ---")
       fields.forEach((field) => {
         field.value = ""
       })
@@ -81,12 +81,12 @@ function SubcategoryAdd() {
   // If form data was added successfully...
   // clear field values
   function addSubcategory() {
-    console.log("addSubcategory: ", elements)
-    console.log("addSubcategory: values = ", values)
+    showCLG && console.log("[P]--SubcategoryAdd > addSubcategory > elements: ", elements)
+    showCLG && console.log("[P]--SubcategoryAdd > addSubcategory > values: ", values)
     if (values.length === 0) return
     const { name, slug, categoryId } = values
-    console.log(
-      "addSubcategory: adding... name: " + name + ", slug: ",
+    showCLG && console.log(
+      "[P]--SubcategoryAdd > useEffect > addSubcategory >  adding... name: " + name + ", slug: ",
       slug + ", categoryId: ",
       categoryId
     )

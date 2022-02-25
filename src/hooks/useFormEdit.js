@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom"
 const axios = require("axios").default
 
 const SHARED_PROPS = ({ type, name, categoryId }) => {
-  console.log("[useFormAdd] SHARED_PROPS > type: ", type)
+  // console.log("[useFormEdit] > SHARED_PROPS > type: ", type)
   switch (type) {
     case "category":
       return {
@@ -29,7 +29,7 @@ function useFormEditCategory() {
   const [error, setError] = useState(null)
   const [formStatus, setFormStatus] = useState(null)
   const [formStatusMsg, setFormStatusMsg] = useState(null)
-  const { categories, activeCategory, cxSetActiveCategoryById, cxSetActiveCategory, activeSubcategory, cxSetActiveSubcategory } = useContext(CrudContext)
+  const { showCLG, categories, activeCategory, cxSetActiveCategoryById, cxSetActiveCategory, activeSubcategory, cxSetActiveSubcategory } = useContext(CrudContext)
   const navigate = useNavigate()
 
   //   const { id, name, slug } = formData
@@ -42,8 +42,8 @@ function useFormEditCategory() {
       type: type,
       id,
     })
-    console.log("[POST] Q: ", q)
-    console.log("values: ", values)
+    showCLG && console.log("[useFormEdit] > submitForm() > Q: ", q)
+    showCLG && console.log("[useFormEdit] > submitForm() > values: ", values)
 
     let formDataNew = new FormData()
     formDataNew.append("id", id)
@@ -54,8 +54,8 @@ function useFormEditCategory() {
       formDataNew.append("categoryId", categoryId)
     }
 
-    console.log(
-      "formDataNew: ",
+    showCLG && console.log(
+      "[useFormEdit] > submitForm() > formDataNew: ",
       formDataNew,
       "name: ",
       name,
@@ -66,18 +66,18 @@ function useFormEditCategory() {
     )
 
     const updateData = async () => {
-      console.log("updateData")
+      showCLG && console.log("[useFormEdit] > submitForm() > updateData()")
 
       try {
         await axios
           .post(q, formDataNew)
           .then(function (response) {
             //handle success
-            console.log("RESPONSE: ", response)
+            showCLG && console.log("[useFormEdit] > submitForm() > updateData() > RESPONSE: ", response)
             if (response.status === 200) {
               setFormStatusMsg(props.success)
               setFormStatus(true)
-              console.log(`${props.success}`)
+              showCLG && console.log(`[useFormEdit] > submitForm() > updateData() > success: ${props.success}`)
               alert(`${props.success}`)
 
               if(type === "subcategory") {
@@ -98,18 +98,18 @@ function useFormEditCategory() {
           })
           .catch((error) => {
             //handle error
-            console.log("Err: ", error.response)
+            showCLG && console.log("[useFormEdit] > submitForm() > updateData() > error.response: ", error.response)
             if (error.response) {
-              console.log(error.response.data)
-              console.log(error.response.status)
-              // console.log(error.response.headers);
+              showCLG && console.log("[useFormEdit] > submitForm() > updateData() > error.response.data: ", error.response.data)
+              showCLG && console.log("[useFormEdit] > submitForm() > updateData() > error.response.status: ", error.response.status)
+              // showCLG && console.log(error.response.headers);
             }
             setFormStatusMsg("xxx")
             setFormStatus(false)
             alert(`${props.error}`)
           })
       } catch (err) {
-        console.log("Error: ", err)
+        showCLG && console.log("[useFormEdit] > submitForm() > updateData() > Error: ", err)
         setFormStatusMsg(err)
         setError(err)
         console.error(err)

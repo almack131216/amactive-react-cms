@@ -15,25 +15,27 @@ export const CrudProvider = ({ children }) => {
     breadcrumbs: [],
     activeCategory: {},
     activeSubcategory: {},
+    showCLG: false
   }
+  const {showCLG} = initialState
 
   const [state, dispatch] = useReducer(crudReducer, initialState)
   const [error, setError] = useState(null)
   const [loading, setLoading] = useState(false)
   // 2 FETCH list
   const q = buildQuery({api: "categories"})
-  console.log("Q: ", q)
+  showCLG && console.log("!!! [CONTEXT] !!! Q: ", q)
   // const { loading, error, categories } = useFetchCategoryList(q, {type: "category"})
 
   // useEffect hooks
   useEffect(() => {
-    console.log("----------------[useEffect]-[CrudProvider]")
+    showCLG && console.log("!!! [CONTEXT] !!! [useEffect]")
     const fetchData = async () => {
       setLoading(true)
       try {
         const response = await axios.get(q)
         const data = response.data
-        console.log("CrudProvider > fetchData:", data)
+        showCLG && console.log("!!! [CONTEXT] !!! > fetchData:", data)
 
         if (data.length) {
           cxSetCategories(data)
@@ -42,7 +44,7 @@ export const CrudProvider = ({ children }) => {
         }
         setLoading(false)
       } catch (error) {
-        console.log("Error: ", error)
+        showCLG && console.log("!!! [CONTEXT] !!! Error: ", error)
         setError(error)
         setLoading(false)
         console.error(error)
@@ -55,7 +57,7 @@ export const CrudProvider = ({ children }) => {
   }, [])
 
   const cxSetActiveCategory = (getCategoryArr) => {
-    // console.log("[CX]---[cxSetActiveCategory]", getCategoryArr)
+    // showCLG && console.log("[CX]---[cxSetActiveCategory]", getCategoryArr)
     dispatch({
       type: ACTIONS.SET_ACTIVE_CATEGORY,
       payload: getCategoryArr,
@@ -63,7 +65,7 @@ export const CrudProvider = ({ children }) => {
   }
 
   const cxSetActiveCategoryById = (getId) => {
-    // console.log("[CX]---[cxSetActiveCategoryById]", getId)
+    // showCLG && console.log("[CX]---[cxSetActiveCategoryById]", getId)
     dispatch({
       type: ACTIONS.SET_ACTIVE_CATEGORY_BY_ID,
       payload: getId,
@@ -71,7 +73,7 @@ export const CrudProvider = ({ children }) => {
   }
 
   const cxSetActiveSubcategory = (getSubcategoryArr) => {
-    // console.log("[CX]---[cxSetActiveSubcategory]", getCategoryArr)
+    // showCLG && console.log("[CX]---[cxSetActiveSubcategory]", getCategoryArr)
     dispatch({
       type: ACTIONS.SET_ACTIVE_SUBCATEGORY,
       payload: getSubcategoryArr,
@@ -79,7 +81,7 @@ export const CrudProvider = ({ children }) => {
   }
 
   const cxSetCategories = (getCategories) => {
-    // console.log("[CX]---[cxSetCategories]", getCategories)
+    // showCLG && console.log("[CX]---[cxSetCategories]", getCategories)
     dispatch({
       type: ACTIONS.SET_CATEGORIES,
       payload: getCategories,
@@ -87,7 +89,7 @@ export const CrudProvider = ({ children }) => {
   }
 
   const cxSetSubcategories = (getSubcategories) => {
-    // console.log("[CX]---[cxSetSubcategories]", getSubcategories)
+    // showCLG && console.log("[CX]---[cxSetSubcategories]", getSubcategories)
     dispatch({
       type: ACTIONS.SET_SUBCATEGORIES,
       payload: getSubcategories,
@@ -95,7 +97,7 @@ export const CrudProvider = ({ children }) => {
   }
 
   const cxSetItems = (getItems) => {
-    // console.log("[CX]---[cxSetItems]", getItems)
+    // showCLG && console.log("[CX]---[cxSetItems]", getItems)
     dispatch({
       type: ACTIONS.SET_ITEMS,
       payload: getItems,
@@ -103,7 +105,7 @@ export const CrudProvider = ({ children }) => {
   }
 
   const cxDeleteCategory = (getId) => {
-    // console.log("[CX]---[cxDeleteCategory]", getId)
+    // showCLG && console.log("[CX]---[cxDeleteCategory]", getId)
     dispatch({
       type: ACTIONS.DELETE_CATEGORY,
       payload: getId,
@@ -111,7 +113,7 @@ export const CrudProvider = ({ children }) => {
   }
 
   const cxDeleteSubcategory = (getId) => {
-    // console.log("[CX]---[cxDeleteSubcategory]", getId)
+    // showCLG && console.log("[CX]---[cxDeleteSubcategory]", getId)
     dispatch({
       type: ACTIONS.DELETE_SUBCATEGORY,
       payload: getId,
@@ -119,7 +121,7 @@ export const CrudProvider = ({ children }) => {
   }
 
   const cxDeleteItem = (getId) => {
-    // console.log("[CX]---[cxDeleteItem]", getId)
+    // showCLG && console.log("[CX]---[cxDeleteItem]", getId)
     dispatch({
       type: ACTIONS.DELETE_ITEM,
       payload: getId,
@@ -127,7 +129,7 @@ export const CrudProvider = ({ children }) => {
   }
 
   const cxSetBreadcrumbs = (getCrumbArr) => {
-    // console.log("[CX]---[cxSetBreadcrumbs]", getCrumbArr)
+    // showCLG && console.log("[CX]---[cxSetBreadcrumbs]", getCrumbArr)
     dispatch({
       type: ACTIONS.SET_BREADCRUMBS,
       payload: getCrumbArr,

@@ -15,7 +15,7 @@ const ACTIONS = {
 }
 
 const crudReducer = (state, action) => {
-  console.log("!!! [REDUCER] !!! ", action.type)
+  state.showCLG && console.log("!!! [REDUCER] !!! ", action.type)
   switch (action.type) {
     case ACTIONS.SET_ITEMS:
       return { ...state, items: action.payload }

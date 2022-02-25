@@ -3,9 +3,9 @@ import CrudContext from "../context/CrudContext"
 const axios = require("axios").default
 
 function useFetchCategoryList(url, options) {
-  console.log("[useFetch] useFetchCategoryList | url:", url)
   // 1 CONTEXT functions & props
   const {
+    showCLG,
     categories,
     cxSetCategories,
     cxSetActiveCategory,
@@ -13,6 +13,7 @@ function useFetchCategoryList(url, options) {
     cxSetSubcategories,
     cxSetActiveSubcategory
   } = useContext(CrudContext)
+  showCLG && console.log("[useFetchList] > url:", url)
   // 2 STATES
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState(null)
@@ -24,7 +25,7 @@ function useFetchCategoryList(url, options) {
       try {
         const response = await axios.get(url)
         const data = response.data
-        console.log("fetchData:", data)
+        showCLG && console.log("[useFetchList] > [useEffect] > fetchData: ", data)
 
         if (data.length) {
           type === "category" && cxSetCategories(data)
@@ -48,7 +49,7 @@ function useFetchCategoryList(url, options) {
         }
         setLoading(false)
       } catch (error) {
-        console.log("Error: ", error)
+        showCLG && console.log("[useFetchList] > [useEffect] > Error: ", error)
         setError(error)
         setLoading(false)
         console.error(error)
@@ -66,7 +67,7 @@ function useFetchCategoryList(url, options) {
 }
 
 function useFetchItems(url, options) {
-  const { items, cxSetItems, cxSetActiveCategory, cxSetActiveSubcategory } =
+  const { showCLG, items, cxSetItems, cxSetActiveCategory, cxSetActiveSubcategory } =
     useContext(CrudContext)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState(null)
@@ -76,7 +77,7 @@ function useFetchItems(url, options) {
       try {
         const response = await axios.get(url)
         const data = response.data
-        console.log("data:", data)
+        showCLG && console.log("[useFetchList] > [useEffect] > data: ", data)
 
         if (data.length) {
           cxSetActiveCategory({
@@ -96,7 +97,7 @@ function useFetchItems(url, options) {
         }
         setLoading(false)
       } catch (error) {
-        console.log("Error: ", error)
+        showCLG && console.log("[useFetchList] > [useEffect] > Error: ", error)
         setError(error)
         setLoading(false)
         console.error(error)

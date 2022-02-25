@@ -35,7 +35,7 @@ const BREADCRUMBS = {
 }
 
 function useCrumb({ page, categoryId, subcategoryId }) {
-  const { activeCategory, activeSubcategory } = useContext(CrudContext)
+  const { showCLG, activeCategory, activeSubcategory } = useContext(CrudContext)
   let breadcrumbArr = [BREADCRUMBS.CATEGORY_LIST]
 
   switch (page) {
@@ -96,9 +96,9 @@ function useCrumb({ page, categoryId, subcategoryId }) {
   activeCategoryCrumb && breadcrumbArr.push(activeCategoryCrumb)
   activeSubcategoryCrumb && breadcrumbArr.push(activeSubcategoryCrumb)
 
-  // console.log("CRUMB cat:", categoryId, activeCategory)
-  // console.log("CRUMB subcat:", subcategoryId, activeSubcategory)
-  // console.log("CRUMB ARR:", breadcrumbArr)
+  // showCLG && console.log("CRUMB cat:", categoryId, activeCategory)
+  // showCLG && console.log("CRUMB subcat:", subcategoryId, activeSubcategory)
+  showCLG && console.log("[useCrumb] > CRUMB ARR:", breadcrumbArr)
   return { breadcrumbArr }
 }
 

@@ -3,10 +3,10 @@ import CrudContext from "../context/CrudContext"
 const axios = require("axios").default
 
 function useFetchCategory(url, options) {
-  // console.log("[useFetch] useFetchCategorySingle | url:", url)
   // 1 CONTEXT functions & props
-  const { cxSetActiveCategory, cxSetActiveSubcategory } =
-    useContext(CrudContext)
+  const { showCLG, cxSetActiveCategory, cxSetActiveSubcategory } =
+  useContext(CrudContext)
+  // showCLG && console.log("[useFetchSingle] useFetchCategory() > url: ", url)
   // 2 STATES
   const [categoryObj, setCategoryObj] = useState({})
   const [loading, setLoading] = useState(false)
@@ -16,11 +16,11 @@ function useFetchCategory(url, options) {
   // 4 LOAD useEffect
   useEffect(() => {
     const fetchData = async () => {
-      // console.log('------> fetchData');
+      // showCLG && console.log('[useFetchSingle] fetchData()');
       try {
         const response = await axios.get(url)
         const data = response.data
-        console.log(data)
+        showCLG && console.log("[useFetchSingle] > useEffect() > data: ", data)
 
         if (data.length) {
           const dataLite = {
@@ -45,7 +45,7 @@ function useFetchCategory(url, options) {
         }
         setLoading(false)
       } catch (error) {
-        console.log("Error: ", error)
+        showCLG && console.log("[useFetchSingle] > useEffect() > Error: ", error)
         setError(error)
         setLoading(false)
         console.error(error)
@@ -62,9 +62,9 @@ function useFetchCategory(url, options) {
 }
 
 function useFetchItem(url, options) {
-  console.log("[useFetch] useFetchItemSingle | url:", url)
+  showCLG && console.log("[useFetchSingle] > useFetchItem() > url: ", url)
   // 1 CONTEXT functions & props
-  const { cxSetActiveCategory, cxSetActiveSubcategory } =
+  const { showCLG, cxSetActiveCategory, cxSetActiveSubcategory } =
     useContext(CrudContext)
   // 2 STATES
   const [itemObj, setItemObj] = useState({})
@@ -75,12 +75,12 @@ function useFetchItem(url, options) {
   // 4 LOAD useEffect
   useEffect(() => {
     const fetchData = async () => {
-      console.log('------> fetchData');
+      showCLG && console.log('[useFetchSingle] > useEffect() > fetchData()');
       
       try {
         const response = await axios.get(url)
         const data = response.data
-        console.log(data)
+        showCLG && console.log("[useFetchSingle] > useEffect() > data: ",data)
 
         if (data.length) {
           const itemLite = {
@@ -94,7 +94,7 @@ function useFetchItem(url, options) {
             subcategoryId: parseInt(data[0].subcategoryId),
             subcategoryName: data[0].subcategoryName,
           }
-          console.log(itemLite)
+          showCLG && console.log("[useFetchSingle] > useEffect() > itemLite: ", itemLite)
           setItemObj(itemLite)
 
           cxSetActiveCategory({
@@ -111,7 +111,7 @@ function useFetchItem(url, options) {
         }
         setLoading(false)
       } catch (error) {
-        console.log("Error: ", error)
+        showCLG && console.log("[useFetchSingle] > useEffect() > Error: ", error)
         setError(error)
         setLoading(false)
         console.error(error)

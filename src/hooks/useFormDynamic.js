@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react"
 import useSlugify from "./useSlugify"
 import useValidation from "./useValidation"
-// import formJSON from "../components/forms/data/formAddCategory.json"
 
 export const useForm = (callback) => {
   // Form Elements
@@ -26,7 +25,7 @@ export const useForm = (callback) => {
   }
 
   const validate = (name, value) => {
-    // console.log("validate: ", name, value)
+    // console.log("[useFormDynamic] > validate: ", name, value)
     const hasError = returnValidationError(name, value)
 
     if (hasError) {
@@ -52,8 +51,8 @@ export const useForm = (callback) => {
   // Method to handle form inputs
   const handleChange = (getName, e) => {
     let { name: fieldName, value: fieldValue, type: fieldType } = e.target
-    console.log("handleChange")
-    console.log("input name: ", fieldType)
+    // console.log("[useFormDynamic] > handleChange()")
+    // console.log("[useFormDynamic] > handleChange() > fieldType: ", fieldType)
     fieldValue = fieldType === 'select-one' ? parseInt(fieldValue) : fieldValue
 
     const newElements = { ...elements }
@@ -79,8 +78,8 @@ export const useForm = (callback) => {
     })
     setElements(newElements)
 
-    console.log("Elements: ", elements)
-    console.log("Errors: ", errors)
+    // console.log("[useFormDynamic] > Elements: ", elements)
+    // console.log("[useFormDynamic] > Errors: ", errors)
   }
 
   // Method to submit form inputs and callback to page
@@ -107,7 +106,7 @@ export const useForm = (callback) => {
       }
       if (name === "slug") {
         newSlug = slugMe(nameFieldValue)
-        console.log("handleSlug: ", nameFieldValue, newSlug)
+        // console.log("[useFormDynamic] > handleSlug() > slug: ", nameFieldValue, newSlug)
         field["value"] = newSlug
         validate("slug", newSlug)
       }
@@ -119,8 +118,7 @@ export const useForm = (callback) => {
       slug: newSlug,
     })
 
-    console.log("Elements: ", elements)
-    // return newSlug
+    // console.log("[useFormDynamic] > handleSlug() > Elements: ", elements)
   }
 
   // RETURN values & functions

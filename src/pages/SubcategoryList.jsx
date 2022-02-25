@@ -1,4 +1,4 @@
-import { useEffect, useState, useContext, useRef } from "react"
+import { useEffect, useState, useContext } from "react"
 import { Link, useParams } from "react-router-dom"
 import { Container, Table, Button } from "react-bootstrap"
 import { buildQuery } from "../context/CrudActions"
@@ -9,48 +9,45 @@ import { useDeleteCategory } from "../hooks/useDelete"
 import PageTitle from "../components/PageTitle"
 
 function SubcategoryList() {
-  console.log("[P]--SubcategoryList")
-  const { activeCategory, cxSetActiveSubcategory, cxSetBreadcrumbs } = useContext(CrudContext)
+  // 1 CONTEXT
+  const { showCLG, activeCategory, cxSetActiveSubcategory, cxSetBreadcrumbs } =
+    useContext(CrudContext)
+  showCLG && console.log("[P]--SubcategoryList")
+  //
+  // FETCH
   const params = useParams()
   const { breadcrumbArr } = useCrumb({
     page: "subcategory-list",
     categoryId: params.categoryId,
   })
-  const isMounted = useRef(true)
   const [categoryId, setCategoryId] = useState(
     params.categoryId ? params.categoryId : null
   )
-
   const q = buildQuery({
     api: "subcategories",
     categoryId: params.categoryId ? params.categoryId : null,
   })
-
   const { loading, error, subcategories } = useFetchCategoryList(q, {
     type: "subcategory",
-    categoryId: params.categoryId ? params.categoryId : null
+    categoryId: params.categoryId ? params.categoryId : null,
   })
-
+  //
+  // DELETE
   const { deleteCategory, deletedId } = useDeleteCategory()
-
+  //
+  // USEEFFECT
   useEffect(() => {
-    console.log("LOAD BREADCRUMBS... ", breadcrumbArr)
+    showCLG && console.log("[P]--[useEffect] > breadcrumbArr: ", breadcrumbArr)
     cxSetActiveSubcategory({})
     cxSetBreadcrumbs(breadcrumbArr)
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activeCategory])
-
-  if (error) {
-    return <h1>Error: {error}</h1>
-  }
-
-  if (loading) {
-    return <h1>Loading...</h1>
-  }
-
-  if (deletedId) {
-    console.log("deletedId: ", deletedId)
-  }
+  //
+  // RETURNED PROPS
+  if (error) return <h1>Error: {error}</h1>
+  if (loading) return <h1>Loading...</h1>
+  if (deletedId)
+    showCLG && console.log("[P]--[useEffect] > deletedId: ", deletedId)
 
   return (
     <Container>
@@ -103,9 +100,7 @@ function SubcategoryList() {
                             name: subcategory.name,
                             id: subcategory.id,
                             type: "subcategory",
-                            categoryId: subcategory.categoryId,
-                            // subcategoryCount: category.subcategoryCount,
-                            // itemCount: category.itemCount
+                            categoryId: subcategory.categoryId
                           })
                         }
                       >

@@ -4,7 +4,7 @@ import CrudContext from "../context/CrudContext"
 const axios = require("axios").default
 
 function useDeleteCategory() {
-  const { cxDeleteCategory, cxDeleteSubcategory } = useContext(CrudContext)
+  const { showCLG, cxDeleteCategory, cxDeleteSubcategory } = useContext(CrudContext)
   const [deletedId, setDeletedId] = useState(null)
 
   const deleteCategory = ({ name, id, type, categoryId }) => {
@@ -14,7 +14,7 @@ function useDeleteCategory() {
       type: type,
       id,
     })
-    console.log("Q: ", q)
+    showCLG && console.log("[useDelete] > useDeleteCategory() > Q: ", q)
 
     if (
       window.confirm(
@@ -27,7 +27,7 @@ function useDeleteCategory() {
       })
         .then(function (response) {
           //handle success
-          console.log(response)
+          showCLG && console.log("[useDelete] > useDeleteCategory() > response: ",response)
           if (response.status === 200) {
             alert(`${name} deleted successfully`)
             setDeletedId(id)
@@ -37,7 +37,7 @@ function useDeleteCategory() {
         })
         .catch(function (response) {
           //handle error
-          console.log(response)
+          showCLG && console.log("[useDelete] > useDeleteCategory() > catch() > response: ",response)
         })
     }
   }
@@ -46,7 +46,7 @@ function useDeleteCategory() {
 }
 
 function useDeleteItem() {
-  const { cxDeleteItem } = useContext(CrudContext)
+  const { showCLG, cxDeleteItem } = useContext(CrudContext)
   const [deletedId, setDeletedId] = useState(null)
 
   const deleteItem = ({ name, id, type, categoryId }) => {
@@ -56,7 +56,7 @@ function useDeleteItem() {
       type: type,
       id,
     })
-    console.log("Q: ", q)
+    showCLG && console.log("[useDelete] > useDeleteItem() > Q: ", q)
 
     if (
       window.confirm(
@@ -69,7 +69,7 @@ function useDeleteItem() {
       })
         .then(function (response) {
           //handle success
-          console.log(response)
+          showCLG && console.log("[useDelete] > useDeleteItem() > response: ", response)
           if (response.status === 200) {
             alert(`${name} deleted successfully`)
             setDeletedId(id)
@@ -78,7 +78,7 @@ function useDeleteItem() {
         })
         .catch(function (response) {
           //handle error
-          console.log(response)
+          showCLG && console.log("[useDelete] > useDeleteItem() > catch() > response: ",response)
         })
     }
   }
