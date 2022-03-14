@@ -8,7 +8,7 @@ import useForm from "../hooks/useFormDynamic"
 import { FormContext } from "../context/FormContext"
 import Element from "../components/forms/elements/Element"
 import BtnSubmit from "../components/forms/elements/BtnSubmit"
-import formJSON from "../components/forms/data/formAddSubcategory.json"
+import formSubcategoryJSON from "../components/forms/data/formAddSubcategory.json"
 import { useFetchCategory } from "../hooks/useFetchSingle"
 
 function SubcategoryAdd() {
@@ -22,7 +22,7 @@ function SubcategoryAdd() {
     cxSetActiveCategory,
     cxSetActiveSubcategory,
   } = useContext(CrudContext)
-  const [categoryObjInit, setCategoryObjInit] = useState({})
+
   // FETCH
   const params = useParams()
   let { breadcrumbArr } = useCrumb({
@@ -56,29 +56,29 @@ function SubcategoryAdd() {
     handleSlug,
     elements,
     values,
+    valuesInit,
     errors,
     handleSubmit,
     setElements,
+    highlightFieldChange,
+    isFormValid,
+    setCategoryObjInit,
+    setFieldKeysInit,
   } = useForm(editSubcategory)
   // PROPS from hooks
   const { fields, page_title_edit, btnUpdate } = elements ?? {}
-  // SET FIELD KEYS
-  const fieldKeys =
-    fields &&
-    fields.map((item) => {
-      return item.name
-    })
 
   // USEEFFECT
   // SET form field elements
   useEffect(() => {
-    showCLG && console.log(
-      "[P]--[useEffect] > categoryObj=",
-      categoryObj,
-      Object.keys(categoryObj).length
-    )
+    showCLG &&
+      console.log(
+        "[P]--[useEffect] > categoryObj=",
+        categoryObj,
+        Object.keys(categoryObj).length
+      )
     // 1 - load fields from JSON
-    let loadElements = formJSON[0]
+    let loadElements = formSubcategoryJSON[0]
     // 2 - if adding with category in URL
     if (Object.keys(categoryObj).length) {
       showCLG && console.log("[P]--[useEffect] > forceCategorySelected: ", 12)
@@ -107,6 +107,7 @@ function SubcategoryAdd() {
         categoryId: categoryId,
       })
       setCategoryObjInit(categoryObj)
+      setFieldKeysInit(["name", "slug", "categoryId"])
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [categoryObj])
@@ -120,49 +121,26 @@ function SubcategoryAdd() {
   // can submit?
   useEffect(() => {
     showCLG && console.log("[P]--[useEffect] > isFormValid()")
+    setCanSubmit(isFormValid())
     values && Object.keys(values).length && isFormValid()
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [values, errors])
-
-  function isFormValid() {
-    let tmpArr = {}
-    let hasChanged = 0
-    for (let i = 0, len = fieldKeys.length; i < len; i++) {
-      if (
-        values[fieldKeys[i]] &&
-        values[fieldKeys[i]] !== activeSubcategory[fieldKeys[i]]
-      ) {
-        hasChanged++
-        tmpArr[fieldKeys[i]] = values[fieldKeys[i]]
-      } else {
-        tmpArr[fieldKeys[i]] = activeSubcategory[fieldKeys[i]]
-      }
-    }
-
-    if (hasChanged > 0 && tmpArr !== {} && !Object.keys(errors).length) {
-      showCLG && console.log("[P]--[isFormValid] > FIELDS CHANGED", tmpArr, values, activeSubcategory)
-      // return false
-      setCanSubmit(true)
-    } else {
-      showCLG && console.log("[P]--[isFormValid] > NO CHANGE")
-      setCanSubmit(false)
-    }
-    // return true
-  }
 
   // Submitting...
   // If form data was added successfully...
   // clear field values
   function editSubcategory() {
-    showCLG && console.log("[P]--[editSubcategory] > editSubcategory: ", elements)
+    showCLG &&
+      console.log("[P]--[editSubcategory] > editSubcategory: ", elements)
     showCLG && console.log("[P]--[editSubcategory] > values = ", values)
-    if (values.length === 0) return
+    if (!canSubmit) return
     // const { name, slug, categoryId } = values
-    showCLG && console.log(
-      "[P]--[editSubcategory] > editing... name: " + values.name + ", slug: ",
-      values.slug + ", categoryId: ",
-      values.categoryId
-    )
+    showCLG &&
+      console.log(
+        "[P]--[editSubcategory] > editing... name: " + values.name + ", slug: ",
+        values.slug + ", categoryId: ",
+        values.categoryId
+      )
     submitForm({
       id,
       values,
@@ -172,27 +150,12 @@ function SubcategoryAdd() {
   }
   // (END) Submitting
 
-  const highlightFieldChange = (getFieldValue, getInitValue, getFieldError) => {
-    return getFieldValue !== getInitValue ? (
-      <span
-        style={
-          !getFieldError
-            ? { backgroundColor: "green", color: "white" }
-            : { backgroundColor: "red", color: "white" }
-        }
-      >
-        {getFieldValue}
-      </span>
-    ) : (
-      getFieldValue
-    )
-  }
-
   // RETURNED PROPS
   if (error) return <h1>Error: {error}</h1>
   if (loading) return <h3>Loading...</h3>
   if (formError) return <h3>There was an error updating</h3>
   if (formLoading) return <h3>Updating...</h3>
+  if (!valuesInit) return <h3>Loading Object...</h3>
 
   showCLG && console.log("[P]-- FIELDS:", fields)
   // XML
@@ -251,9 +214,9 @@ function SubcategoryAdd() {
                 <div className='col-sm-4'>
                   <h3>Old</h3>
                   <ul>
-                    <li>name: {categoryObjInit.name}</li>
-                    <li>slug: {categoryObjInit.slug}</li>
-                    <li>categoryId: {categoryObjInit.categoryId}</li>
+                    <li>name: {valuesInit.name}</li>
+                    <li>slug: {valuesInit.slug}</li>
+                    <li>categoryId: {valuesInit.categoryId}</li>
                   </ul>
                 </div>
                 <div className='col-sm-4'>
@@ -263,7 +226,7 @@ function SubcategoryAdd() {
                       name:{" "}
                       {highlightFieldChange(
                         fields[0].value,
-                        categoryObjInit.name,
+                        valuesInit.name,
                         errors.name
                       )}
                     </li>
@@ -271,7 +234,7 @@ function SubcategoryAdd() {
                       slug:{" "}
                       {highlightFieldChange(
                         fields[1].value,
-                        categoryObjInit.slug,
+                        valuesInit.slug,
                         errors.slug
                       )}
                     </li>
@@ -279,7 +242,7 @@ function SubcategoryAdd() {
                       categoryId:{" "}
                       {highlightFieldChange(
                         fields[2].value,
-                        categoryObjInit.categoryId,
+                        valuesInit.categoryId,
                         errors.categoryId
                       )}
                     </li>

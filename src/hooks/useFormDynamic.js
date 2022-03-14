@@ -5,7 +5,9 @@ import useValidation from "./useValidation"
 export const useForm = (callback) => {
   // Form Elements
   const [elements, setElements] = useState(null)
+  const [fieldKeys, setFieldKeys] = useState([])
   // Form Values
+  const [valuesInit, setValuesInit] = useState({})
   const [values, setValues] = useState({})
   // Errors
   const [errors, setErrors] = useState({})
@@ -53,7 +55,7 @@ export const useForm = (callback) => {
     let { name: fieldName, value: fieldValue, type: fieldType } = e.target
     // console.log("[useFormDynamic] > handleChange()")
     // console.log("[useFormDynamic] > handleChange() > fieldType: ", fieldType)
-    fieldValue = fieldType === 'select-one' ? parseInt(fieldValue) : fieldValue
+    fieldValue = fieldType === "select-one" ? parseInt(fieldValue) : fieldValue
 
     const newElements = { ...elements }
     newElements.fields.forEach((field) => {
@@ -121,16 +123,67 @@ export const useForm = (callback) => {
     // console.log("[useFormDynamic] > handleSlug() > Elements: ", elements)
   }
 
+  function isFormValid() {
+    if(!elements) return
+
+    let tmpArr = {}
+    let hasChanged = 0
+    for (let i = 0, len = fieldKeys.length; i < len; i++) {
+      console.log(fieldKeys[i], valuesInit[fieldKeys[i]], values[fieldKeys[i]]);
+      if (values[fieldKeys[i]] && values[fieldKeys[i]] !== valuesInit[fieldKeys[i]]) {
+        hasChanged++
+        tmpArr[fieldKeys[i]] = values[fieldKeys[i]]
+      }
+    }
+
+    if (hasChanged > 0 && tmpArr !== {} && !Object.keys(errors).length) {
+      // console.log("[P]--[isFormValid] > CAN submit > FIELDS CHANGED", tmpArr, values)
+      return true
+    }
+    console.log("[P]--[isFormValid] > CANNOT submit")
+    return false
+  }
+
+  const highlightFieldChange = (getFieldValue, getInitValue, getFieldError) => {
+    return getFieldValue !== getInitValue ? (
+      <span
+        style={
+          !getFieldError
+            ? { backgroundColor: "green", color: "white" }
+            : { backgroundColor: "red", color: "white" }
+        }
+      >
+        {getFieldValue}
+      </span>
+    ) : (
+      getFieldValue
+    )
+  }
+
+  const setCategoryObjInit = (getObject) => {
+    console.log('setCategoryObjInit', getObject);
+    setValuesInit(getObject)
+  }
+
+  const setFieldKeysInit = (getArray) => {
+      setFieldKeys(getArray)
+  }
+
   // RETURN values & functions
   return {
     elements,
     values,
+    valuesInit,
     errors,
     handleChange,
     handleSubmit,
     handleSlug,
     setElements,
     setParentCategoryId,
+    highlightFieldChange,
+    isFormValid,
+    setCategoryObjInit,
+    setFieldKeysInit
   }
 }
 
