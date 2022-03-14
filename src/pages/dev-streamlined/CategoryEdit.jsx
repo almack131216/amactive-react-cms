@@ -1,10 +1,10 @@
 import { useEffect, useState, useContext } from "react"
 import { useParams } from "react-router-dom"
-import { useCrumb } from "../hooks/useCrumb"
-import { buildQuery } from "../context/CrudActions"
-import { useFetchCategory } from "../hooks/useFetchSingle"
+import { useCrumb } from "../../hooks/useCrumb"
+import { buildQuery } from "../../context/CrudActions"
+import { useFetchCategory } from "../../hooks/useFetchSingle"
 import { Form, Button, Row, Col } from "react-bootstrap"
-import CrudContext from "../context/CrudContext"
+import CrudContext from "../../context/CrudContext"
 
 const axios = require("axios").default
 

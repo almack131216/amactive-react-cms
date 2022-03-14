@@ -8,6 +8,7 @@ import useForm from "../hooks/useFormDynamic"
 import { FormContext } from "../context/FormContext"
 import Element from "../components/forms/elements/Element"
 import BtnSubmit from "../components/forms/elements/BtnSubmit"
+import formCategoryJSON from "../components/forms/data/formAddCategory.json"
 import formSubcategoryJSON from "../components/forms/data/formAddSubcategory.json"
 import { useFetchCategory } from "../hooks/useFetchSingle"
 
@@ -16,7 +17,6 @@ function SubcategoryAdd() {
   // 1 CONTEXT
   const {
     showCLG,
-    activeCategory,
     activeSubcategory,
     cxSetBreadcrumbs,
     cxSetActiveCategory,
@@ -25,19 +25,29 @@ function SubcategoryAdd() {
 
   // FETCH
   const params = useParams()
+  const pageProps = {
+    page: params.categoryId ? "category-edit" : "subcategory-edit",
+    categoryId: params.categoryId ? params.categoryId : null,
+    subcategoryId: params.subcategoryId ? params.subcategoryId : null,
+    api: params.categoryId ? "categories" : "subcategories",
+    apiId: params.categoryId ? params.categoryId : params.subcategoryId,
+    type: params.categoryId ? "category" : "subcategory",
+    jsonData: params.categoryId ? formCategoryJSON[0] : formSubcategoryJSON[0],
+  }
   let { breadcrumbArr } = useCrumb({
-    page: "subcategory-edit",
-    categoryId: activeCategory ? activeCategory.id : null,
-    subcategoryId: params.subcategoryId,
+    page: pageProps.page,
+    categoryId: pageProps.categoryId,
+    subcategoryId: pageProps.subcategoryId,
   })
+
   const [canSubmit, setCanSubmit] = useState(false)
   // FETCH
   const q = buildQuery({
-    api: "subcategories",
-    id: params.subcategoryId ? params.subcategoryId : null,
+    api: pageProps.api,
+    id: pageProps.apiId,
   })
   const { loading, error, categoryObj } = useFetchCategory(q, {
-    type: "subcategory",
+    type: pageProps.type,
   })
   const { id, name, slug } = categoryObj
 
@@ -78,7 +88,7 @@ function SubcategoryAdd() {
         Object.keys(categoryObj).length
       )
     // 1 - load fields from JSON
-    let loadElements = formSubcategoryJSON[0]
+    let loadElements = pageProps.jsonData
     // 2 - if adding with category in URL
     if (Object.keys(categoryObj).length) {
       showCLG && console.log("[P]--[useEffect] > forceCategorySelected: ", 12)
@@ -90,22 +100,33 @@ function SubcategoryAdd() {
       // make new object of updated object.
       newElements.fields[0].value = name
       newElements.fields[1].value = slug
-      newElements.fields[2].value = categoryId
+      if (pageProps.type === "category") {
+        // 3 - set breadcrumbs
+        cxSetActiveCategory({
+          id: id,
+          name: name,
+          slug: slug,
+        })
+        cxSetActiveSubcategory({})
+      }
+      if (pageProps.type === "subcategory") {
+        newElements.fields[2].value = categoryId
+        // 3 - set breadcrumbs
+        cxSetActiveCategory({
+          id: categoryId,
+          name: categoryName,
+          slug: categorySlug,
+        })
+        cxSetActiveSubcategory({
+          id: id,
+          name: name,
+          slug: slug,
+          categoryId: categoryId,
+        })
+      }
       showCLG && console.log("[P]--[useEffect] > newElements: ", newElements)
-      setElements(newElements)
       showCLG && console.log("[P]--[useEffect] > loadElements: ", loadElements)
-      // 3 - set breadcrumbs
-      cxSetActiveCategory({
-        id: categoryId,
-        name: categoryName,
-        slug: categorySlug,
-      })
-      cxSetActiveSubcategory({
-        id: id,
-        name: name,
-        slug: slug,
-        categoryId: categoryId,
-      })
+      setElements(newElements)
       setCategoryObjInit(categoryObj)
       setFieldKeysInit(["name", "slug", "categoryId"])
     }
@@ -144,7 +165,7 @@ function SubcategoryAdd() {
     submitForm({
       id,
       values,
-      type: "subcategory",
+      type: pageProps.type,
     })
     setCanSubmit(false)
   }
@@ -216,7 +237,9 @@ function SubcategoryAdd() {
                   <ul>
                     <li>name: {valuesInit.name}</li>
                     <li>slug: {valuesInit.slug}</li>
-                    <li>categoryId: {valuesInit.categoryId}</li>
+                    {pageProps.type === "subcategory" && (
+                      <li>categoryId: {valuesInit.categoryId}</li>
+                    )}
                   </ul>
                 </div>
                 <div className='col-sm-4'>
@@ -238,14 +261,16 @@ function SubcategoryAdd() {
                         errors.slug
                       )}
                     </li>
-                    <li>
-                      categoryId:{" "}
-                      {highlightFieldChange(
-                        fields[2].value,
-                        valuesInit.categoryId,
-                        errors.categoryId
-                      )}
-                    </li>
+                    {pageProps.type === "subcategory" && (
+                      <li>
+                        categoryId:{" "}
+                        {highlightFieldChange(
+                          fields[2].value,
+                          valuesInit.categoryId,
+                          errors.categoryId
+                        )}
+                      </li>
+                    )}
                   </ul>
                 </div>
               </div>

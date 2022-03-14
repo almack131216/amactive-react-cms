@@ -7,7 +7,6 @@ import Breadcrumbs from "./components/Breadcrumb"
 import Home from "./pages/Home"
 import Category from "./pages/Category"
 import CategoryAdd from "./pages/CategoryAdd"
-import CategoryEdit from "./pages/CategoryEdit"
 import CategoryList from "./pages/CategoryList"
 import Subcategory from "./pages/Subcategory"
 import SubcategoryAdd from "./pages/SubcategoryAdd"
@@ -35,7 +34,7 @@ function App() {
               <Route path='/category/:categoryId' element={<Category />} />
               <Route
                 path='/category/edit/:categoryId'
-                element={<CategoryEdit />}
+                element={<SubcategoryEdit />}
               />
               <Route path='/category/add' element={<CategoryAdd />} />
               {/* Subcategory */}
