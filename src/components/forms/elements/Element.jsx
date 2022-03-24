@@ -1,6 +1,8 @@
+import { useContext } from "react"
 import Input from "./Input"
 import Select from "./Select"
 import Checkbox from "./Checkbox"
+import CrudContext from "../../../context/CrudContext"
 
 const Element = ({
   field: {
@@ -9,10 +11,12 @@ const Element = ({
     label,
     tip,
     placeholder,
-    value,
-    options    
+    value
   },categoryId,error
 }) => {
+
+  const {selectCategoryOptions} = useContext(CrudContext)
+
   switch (type) {
     case "text":
       return (
@@ -37,6 +41,8 @@ const Element = ({
       )
 
     case "select":
+      const options = name === "categoryId" ? selectCategoryOptions : []
+
       return (
         <Select
           name={name}

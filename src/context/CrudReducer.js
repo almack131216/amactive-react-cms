@@ -35,7 +35,16 @@ const crudReducer = (state, action) => {
       return { ...state, activeSubcategory: action.payload }
 
     case ACTIONS.SET_CATEGORIES:
-      return { ...state, categories: action.payload }
+      // SET options for <select> categoryId
+      const categoryOptions = action.payload.map(obj => {
+        return {
+          label: obj.name,
+          slug: obj.slug,
+          value: obj.id
+        }
+      })
+      // (END) SET options
+      return { ...state, categories: action.payload, selectCategoryOptions: categoryOptions }
 
     case ACTIONS.SET_SUBCATEGORIES:
       return {

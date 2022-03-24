@@ -10,6 +10,7 @@ export const CrudProvider = ({ children }) => {
   const initialState = {
     items: [],
     categories: [],
+    selectCategoryOptions: [],
     subcategories: [],
     pageType: "",
     breadcrumbs: [],

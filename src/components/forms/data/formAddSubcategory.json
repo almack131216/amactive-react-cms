@@ -28,24 +28,7 @@
                 "required": "true",
                 "value": 0,
                 "mandatory": "yes",
-                "type": "select",
-                "options": [
-                    {
-                        "label": "Classic Cars For Sale",
-                        "slug": "classic-cars-for-sale",
-                        "value": 2
-                    },
-                    {
-                        "label": "Latest News",
-                        "slug": "latest-news",
-                        "value": 5
-                    },
-                    {
-                        "label": "Staff",
-                        "slug": "staff",
-                        "value": 12
-                    }
-                ]
+                "type": "select"
             }
         ],
         "btnAdd": {
