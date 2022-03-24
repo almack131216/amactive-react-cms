@@ -6,11 +6,10 @@ import Breadcrumbs from "./components/Breadcrumb"
 // import Footer from "./components/Footer"
 import Home from "./pages/Home"
 import Category from "./pages/Category"
-import CategoryAdd from "./pages/CategoryAdd"
 import CategoryList from "./pages/CategoryList"
 import Subcategory from "./pages/Subcategory"
-import SubcategoryAdd from "./pages/SubcategoryAdd"
-import SubcategoryEdit from "./pages/SubcategoryEdit"
+import CategoryAdd from "./pages/CategoryAdd"
+import CategoryEdit from "./pages/CategoryEdit"
 import SubcategoryList from "./pages/SubcategoryList"
 import Item from "./pages/Item"
 import ItemAdd from "./pages/ItemAdd"
@@ -34,9 +33,9 @@ function App() {
               <Route path='/category/:categoryId' element={<Category />} />
               <Route
                 path='/category/edit/:categoryId'
-                element={<SubcategoryEdit />}
+                element={<CategoryEdit page="category-edit" type="category" />}
               />
-              <Route path='/category/add' element={<CategoryAdd />} />
+              <Route path='/category/add' element={<CategoryAdd page="category-add" type="category" />} />
               {/* Subcategory */}
               <Route path='/subcategory/list' element={<SubcategoryList />} />
               <Route
@@ -45,15 +44,15 @@ function App() {
               />
               <Route
                 path='/c:categoryId/subcategory/add'
-                element={<SubcategoryAdd />}
+                element={<CategoryAdd page="subcategory-add" type="subcategory" />}
               />
               <Route
                 path='/subcategory/add'
-                element={<SubcategoryAdd />}
+                element={<CategoryAdd page="subcategory-add" type="subcategory" />}
               />
               <Route
                 path='/subcategory/edit/:subcategoryId'
-                element={<SubcategoryEdit />}
+                element={<CategoryEdit page="subcategory-edit" type="subcategory" />}
               />
               <Route
                 path='/subcategory/show/:subcategoryId'

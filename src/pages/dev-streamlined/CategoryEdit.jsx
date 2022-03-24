@@ -58,19 +58,11 @@ function CategoryEdit() {
     const { id, name, slug } = getArr
     console.log("updateRootCats: ", categories, getArr)
 
-    // const newCats = [...categories]
-    // newCats.map(obj => {
-    //   if(obj.id === getArr.id){
-    //     return {...getArr}
-    //   }
-    //   return obj
-    // })
     const newCats = categories.map((obj) => {
-      return obj.id === id ? {...obj, name: getArr.name, slug: getArr.slug} : obj
+      return obj.id === id ? {...obj, name, slug} : obj
     })
     // newCats.push(getArr)
     console.log("updateRootCats: ", newCats)
-    setCategoriesInit(categories)
     cxSetCategories(newCats)
     cxSetActiveCategory(getArr)
   }
@@ -99,7 +91,7 @@ function CategoryEdit() {
         //handle success
         console.log(response)
         if (response.status === 200) {
-          alert("Category update successfully.")
+          alert(`Category '${formData.name}' update successfully...`)
 
           const updatedCategory = {
             id: id,

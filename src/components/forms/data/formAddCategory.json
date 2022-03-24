@@ -1,6 +1,7 @@
 [
     {
         "page_title": "Add Category",
+        "page_title_edit": "Edit Category",
         "fields": [
             {
                 "name": "name",
@@ -23,6 +24,10 @@
         ],
         "btnAdd": {
             "label": "Add Category",
+            "classes": "btn btn-primary"
+        },
+        "btnUpdate": {
+            "label": "Update Category",
             "classes": "btn btn-primary"
         }
     }

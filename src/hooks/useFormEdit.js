@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom"
 const axios = require("axios").default
 
 const SHARED_PROPS = ({ type, name, categoryId }) => {
-  // console.log("[useFormEdit] > SHARED_PROPS > type: ", type)
+  console.log("[useFormEdit] > SHARED_PROPS > type: ", type)
   switch (type) {
     case "category":
       return {
@@ -29,7 +29,15 @@ function useFormEditCategory() {
   const [error, setError] = useState(null)
   const [formStatus, setFormStatus] = useState(null)
   const [formStatusMsg, setFormStatusMsg] = useState(null)
-  const { showCLG, categories, activeCategory, cxSetActiveCategoryById, cxSetActiveCategory, activeSubcategory, cxSetActiveSubcategory } = useContext(CrudContext)
+  const {
+    showCLG,
+    categories,
+    cxSetActiveCategoryById,
+    activeSubcategory,
+    cxSetActiveSubcategory,
+    cxSetCategories,
+    cxSetActiveCategory,
+  } = useContext(CrudContext)
   const navigate = useNavigate()
 
   //   const { id, name, slug } = formData
@@ -54,17 +62,41 @@ function useFormEditCategory() {
       formDataNew.append("categoryId", categoryId)
     }
 
-    showCLG && console.log(
-      "[useFormEdit] > submitForm() > formDataNew: ",
-      formDataNew,
-      "name: ",
-      name,
-      "slug: ",
-      slug,
-      "categoryId: ",
-      categoryId
-    )
+    showCLG &&
+      console.log(
+        "[useFormEdit] > submitForm() > formDataNew: ",
+        formDataNew,
+        "name: ",
+        name,
+        "slug: ",
+        slug,
+        "categoryId: ",
+        categoryId
+      )
 
+    const updateRootCats = (getArr) => {
+      const { id, name, slug } = getArr
+      console.log("updateRootCats: ", categories, getArr)
+
+      // const newCats = [...categories]
+      // newCats.map(obj => {
+      //   if(obj.id === getArr.id){
+      //     return {...getArr}
+      //   }
+      //   return obj
+      // })
+      const newCats = categories.map((obj) => {
+        return obj.id === id
+          ? { ...obj, name: getArr.name, slug: getArr.slug }
+          : obj
+      })
+      // newCats.push(getArr)
+      console.log("updateRootCats: ", newCats)
+      cxSetCategories(newCats)
+      cxSetActiveCategory(getArr)
+    }
+
+    // updateData
     const updateData = async () => {
       showCLG && console.log("[useFormEdit] > submitForm() > updateData()")
 
@@ -73,35 +105,71 @@ function useFormEditCategory() {
           .post(q, formDataNew)
           .then(function (response) {
             //handle success
-            showCLG && console.log("[useFormEdit] > submitForm() > updateData() > RESPONSE: ", response)
+            showCLG &&
+              console.log(
+                "[useFormEdit] > submitForm() > updateData() > RESPONSE: ",
+                response
+              )
             if (response.status === 200) {
               setFormStatusMsg(props.success)
               setFormStatus(true)
-              showCLG && console.log(`[useFormEdit] > submitForm() > updateData() > success: ${props.success}`)
+              showCLG &&
+                console.log(
+                  `[useFormEdit] > submitForm() > updateData() > success: ${props.success}`
+                )
               alert(`${props.success}`)
 
-              if(type === "subcategory") {
-                categoryId && categories.length && cxSetActiveCategoryById(categoryId)
+              if (type === "category") {
+                const updatedCategory = {
+                  id: id,
+                  name: formDataNew.name ? formDataNew.name : name,
+                  slug: formDataNew.slug ? formDataNew.slug : slug,
+                }
+
+                console.log("updatedCategory: ", updatedCategory, categories)
+                updateRootCats(updatedCategory)
+              }
+
+              if (type === "subcategory") {
+                categoryId &&
+                  categories.length &&
+                  cxSetActiveCategoryById(categoryId)
 
                 const newActiveSubcategory = {
                   id,
                   name: name ? name : activeSubcategory.name,
                   slug: slug ? slug : activeSubcategory.slug,
-                  categoryId: categoryId ? categoryId : activeSubcategory.categoryId
+                  categoryId: categoryId
+                    ? categoryId
+                    : activeSubcategory.categoryId,
                 }
 
                 cxSetActiveSubcategory(newActiveSubcategory)
-                categoryId && !categories.length && navigate(`/c${categoryId}/subcategory/list`)
+                categoryId &&
+                  !categories.length &&
+                  navigate(`/c${categoryId}/subcategory/list`)
               }
             }
             // navigate(props.navigate)
           })
           .catch((error) => {
             //handle error
-            showCLG && console.log("[useFormEdit] > submitForm() > updateData() > error.response: ", error.response)
+            showCLG &&
+              console.log(
+                "[useFormEdit] > submitForm() > updateData() > error.response: ",
+                error.response
+              )
             if (error.response) {
-              showCLG && console.log("[useFormEdit] > submitForm() > updateData() > error.response.data: ", error.response.data)
-              showCLG && console.log("[useFormEdit] > submitForm() > updateData() > error.response.status: ", error.response.status)
+              showCLG &&
+                console.log(
+                  "[useFormEdit] > submitForm() > updateData() > error.response.data: ",
+                  error.response.data
+                )
+              showCLG &&
+                console.log(
+                  "[useFormEdit] > submitForm() > updateData() > error.response.status: ",
+                  error.response.status
+                )
               // showCLG && console.log(error.response.headers);
             }
             setFormStatusMsg("xxx")
@@ -109,13 +177,18 @@ function useFormEditCategory() {
             alert(`${props.error}`)
           })
       } catch (err) {
-        showCLG && console.log("[useFormEdit] > submitForm() > updateData() > Error: ", err)
+        showCLG &&
+          console.log(
+            "[useFormEdit] > submitForm() > updateData() > Error: ",
+            err
+          )
         setFormStatusMsg(err)
         setError(err)
         console.error(err)
       }
       setLoading(false)
     }
+    // (END) updateData
     updateData()
   }
 

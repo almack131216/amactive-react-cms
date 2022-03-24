@@ -15,44 +15,42 @@ export const CrudProvider = ({ children }) => {
     breadcrumbs: [],
     activeCategory: {},
     activeSubcategory: {},
-    showCLG: false
+    showCLG: true
   }
   const {showCLG} = initialState
 
   const [state, dispatch] = useReducer(crudReducer, initialState)
   const [error, setError] = useState(null)
   const [loading, setLoading] = useState(false)
-  // 2 FETCH list
+  // 2 FETCH categories list
   const q = buildQuery({api: "categories"})
   showCLG && console.log("!!! [CONTEXT] !!! Q: ", q)
   // const { loading, error, categories } = useFetchCategoryList(q, {type: "category"})
+  const cxFetchCategories = async () => {
+    setLoading(true)
+    try {
+      const response = await axios.get(q)
+      const data = response.data
+      showCLG && console.log("!!! [CONTEXT] !!! > cxFetchCategories:", data)
+
+      if (data.length) {
+        cxSetCategories(data)
+      } else {
+        cxSetCategories([])
+      }
+      setLoading(false)
+    } catch (error) {
+      showCLG && console.log("!!! [CONTEXT] !!! Error: ", error)
+      setError(error)
+      setLoading(false)
+      console.error(error)
+    }
+  }
 
   // useEffect hooks
   useEffect(() => {
     showCLG && console.log("!!! [CONTEXT] !!! [useEffect]")
-    const fetchData = async () => {
-      setLoading(true)
-      try {
-        const response = await axios.get(q)
-        const data = response.data
-        showCLG && console.log("!!! [CONTEXT] !!! > fetchData:", data)
-
-        if (data.length) {
-          cxSetCategories(data)
-        } else {
-          cxSetCategories([])
-        }
-        setLoading(false)
-      } catch (error) {
-        showCLG && console.log("!!! [CONTEXT] !!! Error: ", error)
-        setError(error)
-        setLoading(false)
-        console.error(error)
-      }
-    }
-
-    // TRIGGER function
-    fetchData()
+    cxFetchCategories()
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
@@ -142,6 +140,7 @@ export const CrudProvider = ({ children }) => {
         ...state,
         dispatch,
         ACTIONS,
+        cxFetchCategories,
         cxSetCategories,
         cxSetSubcategories,
         cxSetItems,

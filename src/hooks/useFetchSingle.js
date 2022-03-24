@@ -6,21 +6,23 @@ function useFetchCategory(url, options) {
   // 1 CONTEXT functions & props
   const { showCLG, cxSetActiveCategory, cxSetActiveSubcategory } =
   useContext(CrudContext)
-  // showCLG && console.log("[useFetchSingle] useFetchCategory() > url: ", url)
+  showCLG && console.log("[useFetchSingle] useFetchCategory() > url: ", url)
   // 2 STATES
   const [categoryObj, setCategoryObj] = useState({})
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState(null)
   // 3 OPTIONS ({type: "category", categoryId: 2})
-  const { type } = options
+  const { type, page, categoryId } = options
   // 4 LOAD useEffect
   useEffect(() => {
     const fetchData = async () => {
-      // showCLG && console.log('[useFetchSingle] fetchData()');
+      setLoading(true)
+      showCLG && console.log('[useFetchCategory] fetchData()');
+
       try {
         const response = await axios.get(url)
         const data = response.data
-        showCLG && console.log("[useFetchSingle] > useEffect() > data: ", data)
+        showCLG && console.log("[useFetchCategory] > useEffect() > data: ", data)
 
         if (data.length) {
           const dataLite = {
@@ -53,7 +55,16 @@ function useFetchCategory(url, options) {
     }
 
     // TRIGGER function
-    fetchData()
+    console.log('???', page);
+    if (page === "category-edit" || page === "subcategory-edit") fetchData()
+    page === "subcategory-add" && setCategoryObj({
+      id: null,
+      status: 1,
+      slug: '',
+      name: '',
+      categoryId: categoryId,
+      categoryName: null
+    })
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
@@ -75,6 +86,7 @@ function useFetchItem(url, options) {
   // 4 LOAD useEffect
   useEffect(() => {
     const fetchData = async () => {
+      setLoading(true)
       showCLG && console.log('[useFetchSingle] > useEffect() > fetchData()');
       
       try {

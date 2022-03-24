@@ -1,6 +1,7 @@
-import { useState } from "react"
+import { useState, useContext } from "react"
 import { buildQuery } from "../context/CrudActions"
 import { useNavigate } from "react-router-dom"
+import CrudContext from "../context/CrudContext"
 const axios = require("axios").default
 
 const SHARED_PROPS = ({ type, name, categoryId }) => {
@@ -21,7 +22,8 @@ const SHARED_PROPS = ({ type, name, categoryId }) => {
   }
 }
 
-function useFormAddCategory() {
+function useFormAddCategory() {  
+  const { cxFetchCategories } = useContext(CrudContext)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState(null)
   const [addFormStatus, setAddFormStatus] = useState(null)
@@ -46,11 +48,12 @@ function useFormAddCategory() {
       formDataNew.append("categoryId", categoryId)
     }
 
-    // console.log(
-    //   "[useFormAdd] > useFormAddCategory() > formData: ",
-    //   formDataNew,
-    //   name
-    // )
+    console.log(
+      "[useFormAdd] > useFormAddCategory() > formData > categoryId: ",
+      categoryId,
+      ", name: ",
+      name
+    )
 
     const insertData = async () => {
       try {
@@ -66,6 +69,11 @@ function useFormAddCategory() {
               // console.log(
               //   `[useFormAdd] > useFormAddCategory() > success: ${props.success}`
               // )
+              if (type === "category") {
+                cxFetchCategories();
+                console.log('LOAD INIT CATS');
+              }
+
               setAddFormStatus(true)
               alert(`${props.success}`)
             }

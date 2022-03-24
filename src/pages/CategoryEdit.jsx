@@ -12,11 +12,13 @@ import formCategoryJSON from "../components/forms/data/formAddCategory.json"
 import formSubcategoryJSON from "../components/forms/data/formAddSubcategory.json"
 import { useFetchCategory } from "../hooks/useFetchSingle"
 
-function SubcategoryAdd() {
+function SubcategoryEdit({page}) {
   // console.log("[P]--[SubcategoryEdit]")
+  const type = page === 'category-edit' ? "category" : "subcategory"
   // 1 CONTEXT
   const {
     showCLG,
+    activeCategory,
     activeSubcategory,
     cxSetBreadcrumbs,
     cxSetActiveCategory,
@@ -26,16 +28,15 @@ function SubcategoryAdd() {
   // FETCH
   const params = useParams()
   const pageProps = {
-    page: params.categoryId ? "category-edit" : "subcategory-edit",
     categoryId: params.categoryId ? params.categoryId : null,
     subcategoryId: params.subcategoryId ? params.subcategoryId : null,
     api: params.categoryId ? "categories" : "subcategories",
     apiId: params.categoryId ? params.categoryId : params.subcategoryId,
-    type: params.categoryId ? "category" : "subcategory",
     jsonData: params.categoryId ? formCategoryJSON[0] : formSubcategoryJSON[0],
   }
+  console.log('page: ', page);
   let { breadcrumbArr } = useCrumb({
-    page: pageProps.page,
+    page,
     categoryId: pageProps.categoryId,
     subcategoryId: pageProps.subcategoryId,
   })
@@ -43,11 +44,12 @@ function SubcategoryAdd() {
   const [canSubmit, setCanSubmit] = useState(false)
   // FETCH
   const q = buildQuery({
+    page,
     api: pageProps.api,
     id: pageProps.apiId,
   })
   const { loading, error, categoryObj } = useFetchCategory(q, {
-    type: pageProps.type,
+    type, page
   })
   const { id, name, slug } = categoryObj
 
@@ -100,7 +102,7 @@ function SubcategoryAdd() {
       // make new object of updated object.
       newElements.fields[0].value = name
       newElements.fields[1].value = slug
-      if (pageProps.type === "category") {
+      if (page === "category-edit") {
         // 3 - set breadcrumbs
         cxSetActiveCategory({
           id: id,
@@ -108,8 +110,9 @@ function SubcategoryAdd() {
           slug: slug,
         })
         cxSetActiveSubcategory({})
+        setFieldKeysInit(["name", "slug"])
       }
-      if (pageProps.type === "subcategory") {
+      if (page === "subcategory-edit") {
         newElements.fields[2].value = categoryId
         // 3 - set breadcrumbs
         cxSetActiveCategory({
@@ -123,12 +126,12 @@ function SubcategoryAdd() {
           slug: slug,
           categoryId: categoryId,
         })
+        setFieldKeysInit(["name", "slug", "categoryId"])
       }
       showCLG && console.log("[P]--[useEffect] > newElements: ", newElements)
       showCLG && console.log("[P]--[useEffect] > loadElements: ", loadElements)
       setElements(newElements)
-      setCategoryObjInit(categoryObj)
-      setFieldKeysInit(["name", "slug", "categoryId"])
+      setCategoryObjInit(categoryObj)      
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [categoryObj])
@@ -137,7 +140,7 @@ function SubcategoryAdd() {
   useEffect(() => {
     cxSetBreadcrumbs(breadcrumbArr)
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [activeSubcategory])
+  }, [activeCategory, activeSubcategory])
 
   // can submit?
   useEffect(() => {
@@ -165,7 +168,7 @@ function SubcategoryAdd() {
     submitForm({
       id,
       values,
-      type: pageProps.type,
+      type,
     })
     setCanSubmit(false)
   }
@@ -237,7 +240,7 @@ function SubcategoryAdd() {
                   <ul>
                     <li>name: {valuesInit.name}</li>
                     <li>slug: {valuesInit.slug}</li>
-                    {pageProps.type === "subcategory" && (
+                    {page === "subcategory-edit" && (
                       <li>categoryId: {valuesInit.categoryId}</li>
                     )}
                   </ul>
@@ -261,7 +264,7 @@ function SubcategoryAdd() {
                         errors.slug
                       )}
                     </li>
-                    {pageProps.type === "subcategory" && (
+                    {page === "subcategory-edit" && (
                       <li>
                         categoryId:{" "}
                         {highlightFieldChange(
@@ -282,4 +285,4 @@ function SubcategoryAdd() {
   )
 }
 
-export default SubcategoryAdd
+export default SubcategoryEdit

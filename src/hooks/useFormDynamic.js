@@ -55,7 +55,7 @@ export const useForm = (callback) => {
     let { name: fieldName, value: fieldValue, type: fieldType } = e.target
     // console.log("[useFormDynamic] > handleChange()")
     // console.log("[useFormDynamic] > handleChange() > fieldType: ", fieldType)
-    fieldValue = fieldType === "select-one" ? parseInt(fieldValue) : fieldValue
+    fieldValue = fieldType === "select-one" ? parseInt(fieldValue) : fieldValue.trimStart()//use trimStart to ensure we cannot start with a SPACE
 
     const newElements = { ...elements }
     newElements.fields.forEach((field) => {
@@ -128,11 +128,16 @@ export const useForm = (callback) => {
 
     let tmpArr = {}
     let hasChanged = 0
+    console.log("isFormValid LOOP...",fieldKeys.length)
     for (let i = 0, len = fieldKeys.length; i < len; i++) {
-      console.log(fieldKeys[i], valuesInit[fieldKeys[i]], values[fieldKeys[i]]);
+      console.log("isFormValid: ", fieldKeys[i], valuesInit[fieldKeys[i]], values[fieldKeys[i]]);
       if (values[fieldKeys[i]] && values[fieldKeys[i]] !== valuesInit[fieldKeys[i]]) {
         hasChanged++
         tmpArr[fieldKeys[i]] = values[fieldKeys[i]]
+      }
+      if(elements.fields.find(item => item.name === fieldKeys[i]).required && !valuesInit[fieldKeys[i]] && !values[fieldKeys[i]]){
+        console.log("isFormValid fields: ", elements.fields.find(item => item.name === fieldKeys[i]).required);
+        return false
       }
     }
 
@@ -140,7 +145,7 @@ export const useForm = (callback) => {
       // console.log("[P]--[isFormValid] > CAN submit > FIELDS CHANGED", tmpArr, values)
       return true
     }
-    console.log("[P]--[isFormValid] > CANNOT submit")
+    console.log("[P]--[isFormValid] > CANNOT submit, ", tmpArr.length, Object.keys(values).length)
     return false
   }
 
